@@ -2,10 +2,8 @@ const CACHE_NAME = 'reto-habitos-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './manifest.json'
-  // Si agregas imágenes o iconos más adelante, agrégalos aquí también:
-  // './icon-192.png',
-  // './icon-512.png'
+  './manifest.json',
+  './DML.jpeg' 
 ];
 
 // 1. Instalación del Service Worker (Guarda los archivos en caché)
