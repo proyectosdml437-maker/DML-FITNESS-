@@ -1042,7 +1042,7 @@
             display: "standalone",
             background_color: "#f3f4f6",
             theme_color: "#4f46e5",
-            icons: [{ src: "DML.jpeg", sizes: "512x512", type: "image/png" }]
+            icons: [{ src: "DML.jpeg", sizes: "512x512", type: "image/jpeg" }]
         };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(blob)}">`);
