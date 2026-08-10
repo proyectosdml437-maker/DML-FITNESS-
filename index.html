@@ -1036,13 +1036,13 @@
 
         // Add dummy manifest to simulate PWA installability in browsers that support dynamic injection
         const manifest = {
-            name: "MeAgain Habit Tracker",
-            short_name: "MeAgain",
+            name: "Reto de avitos",
+            short_name: "DML-FITNESS",
             start_url: ".",
             display: "standalone",
             background_color: "#f3f4f6",
             theme_color: "#4f46e5",
-            icons: [{ src: "https://cdn-icons-png.flaticon.com/512/2966/2966486.png", sizes: "512x512", type: "image/png" }]
+            icons: [{ src: "DML.jpeg", sizes: "512x512", type: "image/png" }]
         };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(blob)}">`);
