@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4F46E5">
 <link rel="apple-touch-icon" href="DML.jpeg">
     <meta charset="UTF-8">
@@ -1035,20 +1036,7 @@
         }
 
         // Add dummy manifest to simulate PWA installability in browsers that support dynamic injection
-        const manifest = {
-            name: "Reto de avitos",
-            short_name: "DML-FITNESS",
-            start_url: ".",
-            display: "standalone",
-            background_color: "#f3f4f6",
-            theme_color: "#4f46e5",
-            icons: [{ src: "DML.jpeg", sizes: "512x512", type: "image/jpeg" }]
-        };
-        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-        document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(blob)}">`);
-
-        // Bootstrap App
-        window.onload = initApp;
+        
     </script>
     <script>
   if ('serviceWorker' in navigator) {
