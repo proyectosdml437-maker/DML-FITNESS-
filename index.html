@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4F46E5">
+<link rel="apple-touch-icon" href="DML.jpeg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DML - Reto de Transformación</title>
+    <meta name="theme-color" content="#4F46E5">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- SweetAlert2 (Modals & Toasts) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                        },
+                        teen: { 500: '#3b82f6', 100: '#dbeafe' },
+                        youth: { 500: '#10b981', 100: '#d1fae5' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for App-like feel */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            overscroll-behavior-y: none; /* Prevents pull-to-refresh on mobile apps */
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Loading Screen Animation */
+        #loader {
+            transition: opacity 0.5s ease-out;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e7ff;
+            border-top-color: #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Timeline Styles */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: -2rem;
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
+        }
+        .timeline-item:last-child::before { display: none; }
+        
+        .nav-btn.active { color: #4f46e5; }
+        
+        /* Smooth transitions */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .page-section.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .check-btn {
+            transition: all 0.2s;
+        }
+        .check-btn.checked {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        /* Table responsive */
+        table {
+            font-size: 0.75rem;
+        }
+        @media (max-width: 640px) {
+            .overflow-x-auto {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col relative pb-20">
+
+    <div id="loader" class="fixed inset-0 bg-white flex flex-col justify-center items-center">
+        <div class="text-4xl text-brand-600 mb-4"><i class="fa-solid fa-bolt"></i></div>
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">I-D</h1>
+        <div class="spinner"></div>
+        <p class="mt-4 text-gray-500 text-sm animate-pulse">Sincronizando hábitos...</p>
+    </div>
+
+    <header class="bg-white px-6 pt-12 pb-4 shadow-sm sticky top-0 z-40">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-brand-600"></i> DML
+                </h1>
+                <p class="text-xs text-gray-500 font-medium" id="current-date-display">Cargando fecha...</p>
+            </div>
+            <div class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-inner">
+                <i class="fa-solid fa-fire"></i> Día <span id="current-day-number">-</span>
+            </div>
+        </div>
+
+        <!-- Quote of the day -->
+        <div class="italic text-sm text-gray-600 mb-4 text-center border-l-4 border-brand-500 pl-3 py-1" id="motivational-quote">
+            "La disciplina es el puente entre metas y logros."
+        </div>
+
+        <!-- Debt Tracker -->
+        <div class="flex gap-4 w-full">
+            <div class="flex-1 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden">
+                <i class="fa-solid fa-coins absolute -bottom-4 -right-2 text-6xl opacity-20"></i>
+                <p class="text-xs font-semibold uppercase opacity-80">Deuda Adolescente</p>
+                <div class="text-2xl font-bold mt-1">$<span id="debt-teen">0</span></div>
+            </div>
+            <div class="flex-1 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden">
+                <i class="fa-solid fa-money-bill-wave absolute -bottom-4 -right-2 text-6xl opacity-20"></i>
+                <p class="text-xs font-semibold uppercase opacity-80">Deuda Joven</p>
+                <div class="text-2xl font-bold mt-1">$<span id="debt-youth">0</span></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto no-scrollbar p-6" id="main-content">
+        
+        <!-- DASHBOARD SECTION -->
+        <section id="sec-dashboard" class="page-section active">
+            
+            <h2 class="text-lg font-bold mb-4 text-gray-800">Tareas de Hoy</h2>
+            
+            <!-- Teen Today Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex justify-center items-center text-lg font-bold">
+                            <i class="fa-solid fa-child-reaching"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Adolescente</h3>
+                            <p class="text-xs text-gray-500"><span id="days-left-teen">21</span> días restantes</p>
+                        </div>
+                    </div>
+                    <button onclick="openDayModal('teen', currentDay)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">
+                        Registrar
+                    </button>
+                </div>
+                
+                <div class="w-full bg-gray-100 rounded-full h-2 mb-2">
+                    <div class="bg-blue-500 h-2 rounded-full" id="progress-bar-teen" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>Progreso General</span>
+                    <span id="progress-text-teen">0%</span>
+                </div>
+            </div>
+
+            <!-- Youth Today Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex justify-center items-center text-lg font-bold">
+                            <i class="fa-solid fa-person-running"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Joven</h3>
+                            <p class="text-xs text-gray-500"><span id="days-left-youth">28</span> días restantes</p>
+                        </div>
+                    </div>
+                    <button onclick="openDayModal('youth', currentDay)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">
+                        Registrar
+                    </button>
+                </div>
+                
+                <div class="w-full bg-gray-100 rounded-full h-2 mb-2">
+                    <div class="bg-emerald-500 h-2 rounded-full" id="progress-bar-youth" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>Progreso General</span>
+                    <span id="progress-text-youth">0%</span>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <h2 class="text-lg font-bold mt-8 mb-4 text-gray-800">Rendimiento Semanal</h2>
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+                <canvas id="performanceChart" height="200"></canvas>
+            </div>
+        </section>
+
+        <!-- CALENDARS SECTION -->
+        <section id="sec-calendar" class="page-section">
+            
+            <!-- Teen Calendar -->
+            <h2 class="text-xl font-bold mb-2 flex items-center gap-2 text-blue-600">
+                <i class="fa-solid fa-calendar-day"></i> Calendario Adolescente
+            </h2>
+            <p class="text-sm text-gray-500 mb-4">Reto de 21 Días</p>
+            <div class="grid grid-cols-7 gap-2 mb-8" id="grid-teen">
+                <!-- JS Injects Grid -->
+            </div>
+
+            <!-- Youth Calendar -->
+            <h2 class="text-xl font-bold mb-2 flex items-center gap-2 text-emerald-600">
+                <i class="fa-solid fa-calendar-day"></i> Calendario Joven
+            </h2>
+            <p class="text-sm text-gray-500 mb-4">Reto de 28 Días</p>
+            <div class="grid grid-cols-7 gap-2 mb-8" id="grid-youth">
+                 <!-- JS Injects Grid -->
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm text-sm border border-gray-100">
+                <h4 class="font-bold mb-2">Leyenda</h4>
+                <div class="flex gap-4">
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-green-500"></div> Perfecto</div>
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div> Fallido</div>
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-gray-200"></div> Pendiente</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCHEDULE SECTION -->
+        <section id="sec-schedule" class="page-section">
+            
+            <!-- Tab Buttons -->
+            <div class="flex bg-gray-200 p-1 rounded-xl mb-6">
+                <button onclick="toggleSchedule('teen')" id="tab-teen" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow text-blue-600 transition">Adolescente (12-13)</button>
+                <button onclick="toggleSchedule('youth')" id="tab-youth" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 transition">Joven (17)</button>
+            </div>
+
+            <!-- Teen Info -->
+            <div id="info-teen">
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500 p-5 rounded-r-xl mb-6">
+                    <h3 class="font-bold text-blue-800 mb-3"><i class="fa-solid fa-target"></i> Reto de 3 Semanas (21 Días)</h3>
+                    <p class="text-xs text-blue-900 mb-3">Objetivo: Establecer horarios regulares, asegurar nutrientes para el crecimiento y hacer del movimiento un hábito divertido, sin presiones estéticas extremas.</p>
+                    <div class="bg-white p-3 rounded-lg text-xs text-blue-900 space-y-1">
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Nutrición:</strong> Plato: 50% verduras, 25% proteína, 25% carbos.</span></div>
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Hidratación:</strong> 6-8 vasos de agua diarios. Cero refrescos L-V.</span></div>
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Movimiento:</strong> Circuito 3 días/sem: Sentadillas, lagartijas, jumping jacks, puente, plancha.</span></div>
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Descanso:</strong> 9-10 horas diarias para crecer y recuperarse.</span></div>
+                    </div>
+                </div>
+
+                <h3 class="font-bold mb-4 text-gray-800"><i class="fa-solid fa-calendar-days"></i> Horario de Lunes a Viernes</h3>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-blue-50">
+                                <tr>
+                                    <th class="px-3 py-2 text-left font-bold text-blue-800">Hora</th>
+                                    <th class="px-3 py-2 text-left font-bold text-blue-800">Actividad</th>
+                                    <th class="px-3 py-2 text-left font-bold text-blue-800">Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 text-xs">
+                                <tr class="hover:bg-blue-50/50">
+                                    <td class="px-3 py-2 font-bold text-blue-600">06:30 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Despertar e Hidratación</td>
+                                    <td class="px-3 py-2 text-gray-600">Tomar 1 vaso grande de agua al levantarse + 5 min estiramiento</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
+                                    <td class="px-3 py-2 font-bold text-amber-600">07:00 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Desayuno</td>
+                                    <td class="px-3 py-2 text-gray-600">Ej: 2 huevos revueltos, 1 tortilla, 1 manzana</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50">
+                                    <td class="px-3 py-2 font-bold text-gray-600">08:00 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Escuela/Clases</td>
+                                    <td class="px-3 py-2 text-gray-600">Llevar botella de agua para beber durante la mañana</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
+                                    <td class="px-3 py-2 font-bold text-green-600">11:00 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Snack Escolar</td>
+                                    <td class="px-3 py-2 text-gray-600">Ej: Puñado de nueces, almendras o jícama con limón</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50">
+                                    <td class="px-3 py-2 font-bold text-amber-600">02:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Comida Principal</td>
+                                    <td class="px-3 py-2 text-gray-600">Ej: Pechuga de pollo asada, arroz, ensalada abundante</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
+                                    <td class="px-3 py-2 font-bold text-gray-600">04:00 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Deberes y Pasatiempos</td>
+                                    <td class="px-3 py-2 text-gray-600">Hacer tarea escolar y disfrutar de tiempo libre</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50">
+                                    <td class="px-3 py-2 font-bold text-red-600"><i class="fa-solid fa-fire"></i> 05:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Ejercicio (45 min)</td>
+                                    <td class="px-3 py-2 text-gray-600">L,M,V: Circuito | M,J: Jugar, patinar o bici</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
+                                    <td class="px-3 py-2 font-bold text-amber-600">07:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Cena Ligera</td>
+                                    <td class="px-3 py-2 text-gray-600">Ej: Avena con leche y plátano, o quesadillas con pico de gallo</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50">
+                                    <td class="px-3 py-2 font-bold text-gray-600">08:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Desconexión</td>
+                                    <td class="px-3 py-2 text-gray-600">Apagar pantallas, preparar mochila y ropa</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
+                                    <td class="px-3 py-2 font-bold text-indigo-600"><i class="fa-solid fa-moon"></i> 09:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Dormir</td>
+                                    <td class="px-3 py-2 text-gray-600">9-10 horas de sueño para crecer y recuperarse</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-dumbbell"></i> Circuito de Ejercicio (45 min) - L, M, V</h3>
+                <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 border border-red-100 mb-6">
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <div class="font-bold text-red-600 mb-1">🏃 Calentamiento (5 min)</div>
+                            <p class="text-gray-700">Trotar en el sitio, saltar la cuerda</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <div class="font-bold text-orange-600 mb-1">💪 Circuito (35 min)</div>
+                            <p class="text-gray-700"><strong>3 rondas:</strong> 15 sentadillas, 10 lagartijas, 20 jumping jacks, 15 seg puente, 20 seg plancha</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm col-span-2">
+                            <div class="font-bold text-blue-600 mb-1">❄️ Enfriamiento (5 min)</div>
+                            <p class="text-gray-700">Estiramiento suave de piernas, brazos y espalda + respiración profunda</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-basket-shopping"></i> Lista de Compras Sugerida</h3>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <h4 class="font-bold text-blue-700 mb-2">🥚 Proteínas</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Huevo</li>
+                                <li>Pechuga de pollo</li>
+                                <li>Atún en agua</li>
+                                <li>Queso panela</li>
+                                <li>Frijoles y lentejas</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-orange-700 mb-2">🌾 Carbohidratos</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Avena</li>
+                                <li>Tortillas de maíz</li>
+                                <li>Pan integral</li>
+                                <li>Arroz</li>
+                                <li>Papas</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-red-700 mb-2">🍎 Frutas</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Manzanas</li>
+                                <li>Plátanos</li>
+                                <li>Naranjas</li>
+                                <li>Fresas</li>
+                                <li>Fruta de temporada</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-green-700 mb-2">🥬 Verduras</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Zanahoria</li>
+                                <li>Pepino</li>
+                                <li>Jícama</li>
+                                <li>Lechuga</li>
+                                <li>Espinaca y jitomate</li>
+                            </ul>
+                        </div>
+                        <div class="col-span-2">
+                            <h4 class="font-bold text-yellow-700 mb-2">🥑 Grasas Buenas</h4>
+                            <p class="text-gray-700">Aguacate • Nueces • Almendras • Crema de cacahuate (sin azúcar)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                    <h4 class="font-bold text-amber-800 mb-2"><i class="fa-solid fa-sun"></i> Regla de Fin de Semana</h4>
+                    <p class="text-xs text-amber-900">Sábado o domingo: 1 "comida libre" (pizza, hamburguesa, tacos) para disfrutar con amigos sin remordimientos. Retoma agua y buenos hábitos en la siguiente comida. Descanso completo del ejercicio formal los domingos.</p>
+                </div>
+            </div>
+
+            <!-- Youth Info -->
+            <div id="info-youth" class="hidden">
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-6">
+                    <h3 class="font-bold text-emerald-800 mb-3"><i class="fa-solid fa-target"></i> Reto de 4 Semanas (28 Días)</h3>
+                    <p class="text-xs text-emerald-900 mb-3">Objetivo: Aprovechar su etapa hormonal para ganar fuerza, bajar porcentaje de grasa, mejorar rendimiento físico y mantener energía alta para el estudio.</p>
+                    <div class="bg-white p-3 rounded-lg text-xs text-emerald-900 space-y-1">
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Nutrición:</strong> Proteína en cada comida. Carbos estratégicos (antes/después de entrenar).</span></div>
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Hidratación:</strong> 2-3 litros diarios de agua.</span></div>
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Entrenamiento:</strong> 4-5 días: Fuerza + Cardio HIIT (1 hora diaria).</span></div>
+                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Descanso:</strong> 8 horas de sueño profundo para crear músculo.</span></div>
+                    </div>
+                </div>
+
+                <h3 class="font-bold mb-4 text-gray-800"><i class="fa-solid fa-calendar-days"></i> Horario de Lunes a Viernes</h3>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-emerald-50">
+                                <tr>
+                                    <th class="px-3 py-2 text-left font-bold text-emerald-800">Hora</th>
+                                    <th class="px-3 py-2 text-left font-bold text-emerald-800">Actividad</th>
+                                    <th class="px-3 py-2 text-left font-bold text-emerald-800">Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 text-xs">
+                                <tr class="hover:bg-emerald-50/50">
+                                    <td class="px-3 py-2 font-bold text-emerald-600">06:30 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Despertar e Hidratación</td>
+                                    <td class="px-3 py-2 text-gray-600">Tomar 1-2 vasos de agua natural + estirar 5 minutos</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
+                                    <td class="px-3 py-2 font-bold text-amber-600">07:00 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Desayuno Fuerte</td>
+                                    <td class="px-3 py-2 text-gray-600">3 huevos, 2 panes integrales tostados, medio aguacate</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50">
+                                    <td class="px-3 py-2 font-bold text-gray-600">08:00 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Escuela/Clases</td>
+                                    <td class="px-3 py-2 text-gray-600">Mantener cuerpo hidratado (meta: 2-3 litros al día)</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
+                                    <td class="px-3 py-2 font-bold text-green-600">11:30 AM</td>
+                                    <td class="px-3 py-2 font-semibold">Snack (Opcional)</td>
+                                    <td class="px-3 py-2 text-gray-600">Yogurt griego sin azúcar o una fruta si hay hambre</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50">
+                                    <td class="px-3 py-2 font-bold text-amber-600">02:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Comida (Pre-entreno)</td>
+                                    <td class="px-3 py-2 text-gray-600">Carne magra o pollo, pasta/arroz, verduras cocidas</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
+                                    <td class="px-3 py-2 font-bold text-red-600"><i class="fa-solid fa-fire"></i> 04:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Entrenamiento (1 hora)</td>
+                                    <td class="px-3 py-2 text-gray-600">Rutina de fuerza + cardio HIIT</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50">
+                                    <td class="px-3 py-2 font-bold text-purple-600">05:45 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Snack Post-entreno</td>
+                                    <td class="px-3 py-2 text-gray-600">Batido de leche con plátano y avena, o sándwich de atún</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
+                                    <td class="px-3 py-2 font-bold text-gray-600">06:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Estudio y Descanso</td>
+                                    <td class="px-3 py-2 text-gray-600">Tiempo dedicado a responsabilidades, lectura o videojuegos</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50">
+                                    <td class="px-3 py-2 font-bold text-amber-600">08:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Cena</td>
+                                    <td class="px-3 py-2 text-gray-600">Ensalada grande con pollo desmenuzado, o fajitas de carne</td>
+                                </tr>
+                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
+                                    <td class="px-3 py-2 font-bold text-indigo-600"><i class="fa-solid fa-moon"></i> 10:30 PM</td>
+                                    <td class="px-3 py-2 font-semibold">Dormir</td>
+                                    <td class="px-3 py-2 text-gray-600">8 horas de sueño profundo para crear músculo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-dumbbell"></i> Rutina de Entrenamiento (1 Hora) - L, M, X, J, V</h3>
+                <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 border border-red-100 mb-6">
+                    <div class="grid grid-cols-1 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <div class="font-bold text-red-600 mb-1">🏃 Calentamiento (10 min)</div>
+                            <p class="text-gray-700">Trotar, saltar la cuerda, movilidad articular</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <div class="font-bold text-orange-600 mb-1">💪 Fuerza (30 min)</div>
+                            <p class="text-gray-700"><strong>Opción A:</strong> Mochila con libros/pesas: Sentadillas, flexiones, dominadas (si es posible), levantamientos<br><strong>Opción B:</strong> Ejercicios con peso corporal + resistencia</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <div class="font-bold text-pink-600 mb-1">⚡ Cardio HIIT (15 min)</div>
+                            <p class="text-gray-700">30 seg intenso + 30 seg recuperación x 5 ciclos. Ejemplo: Burpees, montaña rusa, saltos</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <div class="font-bold text-blue-600 mb-1">❄️ Enfriamiento (5 min)</div>
+                            <p class="text-gray-700">Estiramiento completo + respiración profunda</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-basket-shopping"></i> Lista de Compras Sugerida</h3>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <h4 class="font-bold text-emerald-700 mb-2">🥚 Proteínas (Prioritarias)</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Huevos (cartera grande)</li>
+                                <li>Pechuga de pollo</li>
+                                <li>Carne de res magra</li>
+                                <li>Latas de atún</li>
+                                <li>Yogurt griego</li>
+                                <li>Leche o bebida vegetal</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-orange-700 mb-2">🌾 Carbohidratos</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Avena entera</li>
+                                <li>Arroz integral/blanco</li>
+                                <li>Pasta</li>
+                                <li>Pan integral</li>
+                                <li>Camote o papa</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-red-700 mb-2">🍎 Frutas (Pre/Post)</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Plátanos (excelentes)</li>
+                                <li>Frutos rojos</li>
+                                <li>Manzanas</li>
+                                <li>Melón</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-green-700 mb-2">🥬 Verduras</h4>
+                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
+                                <li>Brócoli</li>
+                                <li>Espinacas</li>
+                                <li>Calabacines</li>
+                                <li>Pimientos</li>
+                                <li>Cebolla y lechuga</li>
+                            </ul>
+                        </div>
+                        <div class="col-span-2">
+                            <h4 class="font-bold text-yellow-700 mb-2">🥑 Grasas Buenas</h4>
+                            <p class="text-gray-700">Aguacate • Aceite de oliva • Almendras • Nueces</p>
+                        </div>
+                        <div class="col-span-2 bg-amber-50 p-2 rounded-lg border border-amber-200">
+                            <h4 class="font-bold text-amber-800 mb-1">⚙️ Equipo Básico (Opcional)</h4>
+                            <p class="text-gray-700">Mochila resistente para llenarla de libros (pesa casera) • Par de mancuernas de peso medio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl">
+                    <h4 class="font-bold text-emerald-800 mb-2"><i class="fa-solid fa-sun"></i> Regla de Fin de Semana</h4>
+                    <p class="text-xs text-emerald-900">Sábado o domingo: 1 "comida libre" (pizza, hamburguesa, tacos) para disfrutar con amigos sin remordimientos. Retoma agua y buenos hábitos en la siguiente comida. Descanso completo del ejercicio formal los domingos.</p>
+                </div>
+            </div>
+            
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full glass-nav pb-safe pt-2 px-6 flex justify-between items-center z-50">
+        <button onclick="nav('dashboard')" class="nav-btn active flex flex-col items-center p-2 text-gray-400 hover:text-brand-500 transition-colors w-16" data-target="sec-dashboard">
+            <i class="fa-solid fa-house text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Inicio</span>
+        </button>
+        <button onclick="nav('calendar')" class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-brand-500 transition-colors w-16" data-target="sec-calendar">
+            <i class="fa-solid fa-calendar-check text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Progreso</span>
+        </button>
+        <button onclick="nav('schedule')" class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-brand-500 transition-colors w-16" data-target="sec-schedule">
+            <i class="fa-solid fa-clipboard-list text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Guías</span>
+        </button>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Provided Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBiiY9GSlF-7r3wjBwcLCq5jyxKVOjAAE",
+            authDomain: "smartform-ee4bb.firebaseapp.com",
+            projectId: "smartform-ee4bb",
+            storageBucket: "smartform-ee4bb.firebasestorage.app",
+            messagingSenderId: "590912576678",
+            appId: "1:590912576678:web:5dd2406d46b31ada5b6867",
+            measurementId: "G-07XSZSSCQ5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // App State
+        let currentUser = null;
+        let appData = {
+            startDate: null,
+            teen: {},
+            youth: {}
+        };
+        const TOTAL_DAYS_TEEN = 21;
+        const TOTAL_DAYS_YOUTH = 28;
+        const DEBT_FEE = 10;
+        let currentDay = 1;
+        let performanceChartInstance = null;
+
+        const quotes = [
+            "La disciplina es el puente entre metas y logros.",
+            "No te detengas cuando estés cansado, detente cuando hayas terminado.",
+            "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
+            "Cuida tu cuerpo, es el único lugar que tienes para vivir.",
+            "La motivación te hace empezar, el hábito te mantiene en marcha."
+        ];
+
+        async function initApp() {
+            // Setup Date and Quote
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('es-ES', options);
+            document.getElementById('motivational-quote').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+
+            // Start Notification Service
+            startSmartNotifications();
+
+            // Handle Auth
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    await loadData();
+                    hideLoader();
+                } else {
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (error) {
+                        console.error("Auth Error:", error);
+                        Swal.fire('Error', 'No se pudo conectar a la base de datos.', 'error');
+                        hideLoader();
+                    }
+                }
+            });
+        }
+
+        async function loadData() {
+            if (!currentUser) return;
+            
+            // Following strict path rule: /artifacts/{appId}/users/{userId}/{collectionName}
+            const docRef = doc(db, 'artifacts', firebaseConfig.appId, 'users', currentUser.uid, 'data', 'progress');
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                appData = docSnap.data();
+            } else {
+                // First time setup
+                appData = {
+                    startDate: new Date().toISOString(),
+                    teen: {},
+                    youth: {}
+                };
+                await setDoc(docRef, appData);
+            }
+
+            calculateCurrentDay();
+            renderCalendars();
+            calculateDebtsAndProgress();
+            updateCharts();
+        }
+
+        async function saveData() {
+            if (!currentUser) return;
+            const docRef = doc(db, 'artifacts', firebaseConfig.appId, 'users', currentUser.uid, 'data', 'progress');
+            await setDoc(docRef, appData, { merge: true });
+            calculateDebtsAndProgress();
+            updateCharts();
+        }
+
+        function calculateCurrentDay() {
+            const start = new Date(appData.startDate);
+            const now = new Date();
+            // Calculate difference in days (ignoring time)
+            start.setHours(0,0,0,0);
+            now.setHours(0,0,0,0);
+            const diffTime = Math.abs(now - start);
+            currentDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            
+            document.getElementById('current-day-number').innerText = currentDay;
+            
+            let teenLeft = Math.max(0, TOTAL_DAYS_TEEN - currentDay + 1);
+            let youthLeft = Math.max(0, TOTAL_DAYS_YOUTH - currentDay + 1);
+            document.getElementById('days-left-teen').innerText = teenLeft;
+            document.getElementById('days-left-youth').innerText = youthLeft;
+        }
+
+        function renderCalendars() {
+            const gridTeen = document.getElementById('grid-teen');
+            const gridYouth = document.getElementById('grid-youth');
+            gridTeen.innerHTML = '';
+            gridYouth.innerHTML = '';
+
+            for(let i = 1; i <= Math.max(TOTAL_DAYS_TEEN, TOTAL_DAYS_YOUTH); i++) {
+                if(i <= TOTAL_DAYS_TEEN) {
+                    gridTeen.appendChild(createDayBox(i, 'teen'));
+                }
+                if(i <= TOTAL_DAYS_YOUTH) {
+                    gridYouth.appendChild(createDayBox(i, 'youth'));
+                }
+            }
+        }
+
+        function createDayBox(dayNum, type) {
+            const box = document.createElement('div');
+            box.className = `aspect-square rounded-xl flex items-center justify-center font-bold text-sm cursor-pointer shadow-sm transition-transform active:scale-95`;
+            
+            let statusClass = "bg-white border-2 border-gray-200 text-gray-400"; // Future
+            
+            const dayData = appData[type][dayNum];
+            
+            if (dayNum > currentDay) {
+                // Future days
+                 box.classList.add('bg-white', 'border-2', 'border-gray-200', 'text-gray-400');
+            } else if (dayData && dayData.comida && dayData.ejercicio && dayData.dormir) {
+                // Perfect day
+                box.classList.add('bg-green-500', 'text-white', 'border-2', 'border-green-600');
+            } else if (dayNum < currentDay) {
+                // Past failed day
+                box.classList.add('bg-red-500', 'text-white', 'border-2', 'border-red-600');
+            } else if (dayNum === currentDay) {
+                // Today, pending
+                box.classList.add('bg-amber-400', 'text-amber-900', 'border-2', 'border-amber-500', 'animate-pulse');
+            } else {
+                 box.classList.add('bg-white', 'border-2', 'border-gray-200', 'text-gray-400');
+            }
+
+            box.innerText = dayNum;
+            box.onclick = () => window.openDayModal(type, dayNum);
+            return box;
+        }
+
+        window.openDayModal = (type, dayNum) => {
+            if (dayNum > currentDay) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Tranquilo',
+                    text: 'Aún no llegamos a este día. ¡Enfócate en el hoy!',
+                    confirmButtonColor: '#4f46e5'
+                });
+                return;
+            }
+
+            const isTeen = type === 'teen';
+            const titleColor = isTeen ? '#3b82f6' : '#10b981';
+            const titleText = isTeen ? 'Adolescente (12-13)' : 'Joven (17)';
+            
+            // Ensure object exists
+            if(!appData[type][dayNum]) {
+                appData[type][dayNum] = { comida: false, ejercicio: false, dormir: false };
+            }
+            const data = appData[type][dayNum];
+
+            const btnClass = (checked) => `w-full py-3 px-4 rounded-xl border-2 font-bold mb-3 flex justify-between items-center text-left check-btn ${checked ? 'checked' : 'border-gray-200 text-gray-500 bg-white'}`;
+
+            Swal.fire({
+                title: `Día ${dayNum} - ${titleText}`,
+                html: `
+                    <div class="text-left mt-4" id="modal-checks">
+                        <button class="${btnClass(data.comida)}" data-key="comida">
+                            <span><i class="fa-solid fa-utensils w-6 text-center"></i> Alimentación</span>
+                            <i class="fa-solid ${data.comida ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
+                        </button>
+                        <button class="${btnClass(data.ejercicio)}" data-key="ejercicio">
+                            <span><i class="fa-solid fa-dumbbell w-6 text-center"></i> Ejercicio</span>
+                            <i class="fa-solid ${data.ejercicio ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
+                        </button>
+                        <button class="${btnClass(data.dormir)}" data-key="dormir">
+                            <span><i class="fa-solid fa-bed w-6 text-center"></i> Descanso</span>
+                            <i class="fa-solid ${data.dormir ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4">* Cambios se guardan automáticamente</p>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar y Guardar',
+                confirmButtonColor: titleColor,
+                didOpen: () => {
+                    // Add click listeners to buttons inside modal
+                    document.querySelectorAll('#modal-checks button').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const btnEl = e.currentTarget;
+                            const key = btnEl.getAttribute('data-key');
+                            
+                            // Toggle state
+                            appData[type][dayNum][key] = !appData[type][dayNum][key];
+                            const newState = appData[type][dayNum][key];
+                            
+                            // Update UI instantly
+                            btnEl.className = btnClass(newState);
+                            btnEl.innerHTML = `
+                                <span><i class="fa-solid ${getIcon(key)} w-6 text-center"></i> ${getLabel(key)}</span>
+                                <i class="fa-solid ${newState ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
+                            `;
+                            saveData(); // Save to Firebase in background
+                        });
+                    });
+                }
+            });
+        };
+
+        function getIcon(key) {
+            if(key === 'comida') return 'fa-utensils';
+            if(key === 'ejercicio') return 'fa-dumbbell';
+            return 'fa-bed';
+        }
+        function getLabel(key) {
+            if(key === 'comida') return 'Alimentación';
+            if(key === 'ejercicio') return 'Ejercicio';
+            return 'Descanso';
+        }
+
+        function calculateDebtsAndProgress() {
+            let debtTeen = 0;
+            let debtYouth = 0;
+            let checksTeen = 0;
+            let checksYouth = 0;
+            let maxChecksTeen = Math.min(currentDay, TOTAL_DAYS_TEEN) * 3;
+            let maxChecksYouth = Math.min(currentDay, TOTAL_DAYS_YOUTH) * 3;
+
+            // Calculate Teen
+            for(let i = 1; i < currentDay; i++) { // Only past days for debt
+                const d = appData.teen[i];
+                if (!d || !d.comida || !d.ejercicio || !d.dormir) debtTeen += DEBT_FEE;
+            }
+            for(let i=1; i<= currentDay && i <= TOTAL_DAYS_TEEN; i++){
+                const d = appData.teen[i];
+                if(d) {
+                    if(d.comida) checksTeen++;
+                    if(d.ejercicio) checksTeen++;
+                    if(d.dormir) checksTeen++;
+                }
+            }
+
+            // Calculate Youth
+            for(let i = 1; i < currentDay; i++) { 
+                const d = appData.youth[i];
+                if (!d || !d.comida || !d.ejercicio || !d.dormir) debtYouth += DEBT_FEE;
+            }
+            for(let i=1; i<= currentDay && i <= TOTAL_DAYS_YOUTH; i++){
+                const d = appData.youth[i];
+                if(d) {
+                    if(d.comida) checksYouth++;
+                    if(d.ejercicio) checksYouth++;
+                    if(d.dormir) checksYouth++;
+                }
+            }
+
+            document.getElementById('debt-teen').innerText = debtTeen;
+            document.getElementById('debt-youth').innerText = debtYouth;
+
+            // Update Progress bars
+            const pTeen = maxChecksTeen > 0 ? Math.round((checksTeen / maxChecksTeen) * 100) : 0;
+            const pYouth = maxChecksYouth > 0 ? Math.round((checksYouth / maxChecksYouth) * 100) : 0;
+            
+            document.getElementById('progress-bar-teen').style.width = `${pTeen}%`;
+            document.getElementById('progress-text-teen').innerText = `${pTeen}%`;
+            
+            document.getElementById('progress-bar-youth').style.width = `${pYouth}%`;
+            document.getElementById('progress-text-youth').innerText = `${pYouth}%`;
+
+            renderCalendars(); // Re-render grid colors
+        }
+
+        function updateCharts() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // Extract last 7 days data
+            const labels = [];
+            const dataTeen = [];
+            const dataYouth = [];
+            
+            for(let i = Math.max(1, currentDay - 6); i <= currentDay; i++) {
+                labels.push(`Día ${i}`);
+                let scoreT = 0;
+                let scoreY = 0;
+                if(appData.teen[i]) {
+                    if(appData.teen[i].comida) scoreT++;
+                    if(appData.teen[i].ejercicio) scoreT++;
+                    if(appData.teen[i].dormir) scoreT++;
+                }
+                if(appData.youth[i]) {
+                    if(appData.youth[i].comida) scoreY++;
+                    if(appData.youth[i].ejercicio) scoreY++;
+                    if(appData.youth[i].dormir) scoreY++;
+                }
+                dataTeen.push((scoreT/3)*100);
+                dataYouth.push((scoreY/3)*100);
+            }
+
+            if (performanceChartInstance) {
+                performanceChartInstance.destroy();
+            }
+
+            performanceChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Adolescente', data: dataTeen, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4 },
+                        { label: 'Joven', data: dataYouth, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+                }
+            });
+        }
+
+        window.nav = (target) => {
+            // Update active state in nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-target="sec-${target}"]`).classList.add('active');
+            
+            // Hide all sections, show target
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`sec-${target}`).classList.add('active');
+        };
+
+        window.toggleSchedule = (type) => {
+            const isTeen = type === 'teen';
+            
+            document.getElementById('tab-teen').className = `flex-1 py-2 text-sm font-bold rounded-lg transition ${isTeen ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`;
+            document.getElementById('tab-youth').className = `flex-1 py-2 text-sm font-bold rounded-lg transition ${!isTeen ? 'bg-white shadow text-emerald-600' : 'text-gray-500'}`;
+            
+            document.getElementById('info-teen').style.display = isTeen ? 'block' : 'none';
+            document.getElementById('info-youth').style.display = !isTeen ? 'block' : 'none';
+        };
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 500);
+        }
+
+        function startSmartNotifications() {
+            // Check time every minute
+            setInterval(() => {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+
+                // Hydration Reminder (e.g., at 10 AM, 2 PM, 6 PM)
+                if ((hours === 10 || hours === 14 || hours === 18) && minutes === 0) {
+                    showToast('💧 ¡Hora de hidratarse! Toma un vaso de agua ahora mismo.', 'info');
+                }
+
+                // Sleep preparation reminder (9 PM)
+                if (hours === 21 && minutes === 0) {
+                    showToast('🌙 Prepárate para descansar. Apaga pantallas pronto.', 'info');
+                }
+
+                // End of day warning (11:30 PM)
+                if (hours === 23 && minutes === 30) {
+                    checkMissingHabitsAndWarn();
+                }
+
+            }, 60000); 
+        }
+
+        function checkMissingHabitsAndWarn() {
+            let missing = false;
+            if(appData.teen[currentDay]) {
+                const d = appData.teen[currentDay];
+                if(!d.comida || !d.ejercicio || !d.dormir) missing = true;
+            } else { missing = true; }
+            
+            if(!missing && appData.youth[currentDay]) {
+                const d = appData.youth[currentDay];
+                if(!d.comida || !d.ejercicio || !d.dormir) missing = true;
+            } else if (!appData.youth[currentDay]) { missing = true; }
+
+            if(missing) {
+                Swal.fire({
+                    toast: true, position: 'top-end', showConfirmButton: false, timer: 5000,
+                    icon: 'warning', title: '¡Atención! Faltan hábitos por registrar hoy. ¡Evita la multa de $10!',
+                });
+            }
+        }
+
+        function showToast(msg, icon) {
+            Swal.fire({
+                toast: true, position: 'top', showConfirmButton: false, timer: 3000,
+                icon: icon, title: msg,
+                customClass: { popup: 'rounded-xl shadow-lg mt-12' }
+            });
+        }
+
+        // Add dummy manifest to simulate PWA installability in browsers that support dynamic injection
+        const manifest = {
+            name: "MeAgain Habit Tracker",
+            short_name: "MeAgain",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#f3f4f6",
+            theme_color: "#4f46e5",
+            icons: [{ src: "https://cdn-icons-png.flaticon.com/512/2966/2966486.png", sizes: "512x512", type: "image/png" }]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(blob)}">`);
+
+        // Bootstrap App
+        window.onload = initApp;
+    </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(registration => {
+          console.log('Service Worker registrado con éxito:', registration.scope);
+        })
+        .catch(error => {
+          console.log('Fallo al registrar el Service Worker:', error);
+        });
+    });
+  }
+</script>
+</body>
+</html>
