@@ -15,7 +15,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- SweetAlert2 (Modals & Toasts) -->
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Google Fonts -->
@@ -30,8 +30,8 @@
                         brand: {
                             50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
                         },
-                        teen: { 500: '#3b82f6', 100: '#dbeafe' },
-                        youth: { 500: '#10b981', 100: '#d1fae5' }
+                        itzayana: { 500: '#3b82f6', 100: '#dbeafe' },
+                        diego: { 500: '#10b981', 100: '#d1fae5' }
                     }
                 }
             }
@@ -39,23 +39,21 @@
     </script>
 
     <style>
-        /* Custom Styles for App-like feel */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
-            overscroll-behavior-y: none; /* Prevents pull-to-refresh on mobile apps */
+            overscroll-behavior-y: none;
         }
 
-        /* Hide scrollbar for Chrome, Safari and Opera */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
-        /* Hide scrollbar for IE, Edge and Firefox */
+        
         .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
         }
 
         .glass-nav {
@@ -65,11 +63,11 @@
             border-top: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Loading Screen Animation */
         #loader {
             transition: opacity 0.5s ease-out;
             z-index: 9999;
         }
+        
         .spinner {
             width: 50px;
             height: 50px;
@@ -78,9 +76,18 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+        
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Timeline Styles */
+        .streak-flame {
+            animation: flameFlicker 1.5s ease-in-out infinite;
+        }
+
+        @keyframes flameFlicker {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -95,7 +102,6 @@
         
         .nav-btn.active { color: #4f46e5; }
         
-        /* Smooth transitions */
         .page-section {
             display: none;
             animation: fadeIn 0.3s ease-in-out;
@@ -116,14 +122,246 @@
             border-color: #10b981;
         }
 
-        /* Table responsive */
         table {
             font-size: 0.75rem;
         }
+        
         @media (max-width: 640px) {
             .overflow-x-auto {
                 font-size: 0.65rem;
             }
+        }
+
+        .debt-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .debt-badge {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            font-size: 4rem;
+            opacity: 0.15;
+        }
+
+        .day-box {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .day-box:active {
+            transform: scale(0.95);
+        }
+
+        .streak-counter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+        }
+
+        .progressive-bar {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progressive-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #9ca3af;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .modal-tab.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+
+        .nutrient-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .guide-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .guide-tab-btn {
+            padding: 1rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .guide-tab-btn.active {
+            border-color: #4f46e5;
+            background: #f0f4ff;
+            color: #4f46e5;
+        }
+
+        /* RULETA DEL CASTIGO */
+        .wheel-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: transform 1s ease-out;
+        }
+
+        .spin-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #4f46e5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* COFRE DE RECOMPENSAS */
+        .treasure-chest {
+            animation: chestBounce 0.6s ease-in-out infinite;
+        }
+
+        @keyframes chestBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .chest-open {
+            animation: chestOpen 0.6s ease-out forwards;
+        }
+
+        @keyframes chestOpen {
+            0% { transform: rotateX(0deg) scale(1); }
+            50% { transform: rotateX(-45deg) scale(1.1); }
+            100% { transform: rotateX(0deg) scale(1.05); }
+        }
+
+        .reward-particle {
+            animation: floatUp 1s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(0); }
+        }
+
+        /* POMODORO */
+        .pomodoro-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+        }
+
+        .pomodoro-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .pomodoro-time {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        /* EASTER EGGS */
+        .logo-hover:hover {
+            animation: logoPulse 0.3s ease-out;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .glitch-text {
+            animation: glitch 0.3s ease-out;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .weather-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .weather-alert {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -138,33 +376,62 @@
 
     <header class="bg-white px-6 pt-12 pb-4 shadow-sm sticky top-0 z-40">
         <div class="flex justify-between items-center mb-4">
-            <div>
+            <div class="logo-hover cursor-pointer" id="logo-easter-egg">
                 <h1 class="text-2xl font-bold flex items-center gap-2">
                     <i class="fa-solid fa-bolt text-brand-600"></i> DML
                 </h1>
-                <p class="text-xs text-gray-500 font-medium" id="current-date-display">Cargando fecha...</p>
+                <p class="text-xs text-gray-500 font-medium" id="current-date-display">Cargando...</p>
             </div>
             <div class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-inner">
-                <i class="fa-solid fa-fire"></i> Día <span id="current-day-number">-</span>
+                <i class="fa-solid fa-fire streak-flame"></i> <span id="current-day-number">-</span>
             </div>
         </div>
 
         <!-- Quote of the day -->
-        <div class="italic text-sm text-gray-600 mb-4 text-center border-l-4 border-brand-500 pl-3 py-1" id="motivational-quote">
-            "La disciplina es el puente entre metas y logros."
+        <div class="italic text-sm text-gray-600 mb-4 text-center border-l-4 border-brand-500 pl-3 py-1 leading-relaxed" id="motivational-quote">
+            "Cargando inspiración..."
         </div>
 
-        <!-- Debt Tracker -->
-        <div class="flex gap-4 w-full">
-            <div class="flex-1 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden">
-                <i class="fa-solid fa-coins absolute -bottom-4 -right-2 text-6xl opacity-20"></i>
-                <p class="text-xs font-semibold uppercase opacity-80">Deuda Adolescente</p>
-                <div class="text-2xl font-bold mt-1">$<span id="debt-teen">0</span></div>
+        <!-- Weather Card -->
+        <div id="weather-card" class="weather-card hidden">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm opacity-90">Ciudad Obregón, Sonora</p>
+                    <p class="text-2xl font-bold" id="weather-temp">--°C</p>
+                    <p class="text-xs opacity-75" id="weather-desc">Cargando clima...</p>
+                </div>
+                <div class="text-4xl" id="weather-icon">🌤️</div>
             </div>
-            <div class="flex-1 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden">
-                <i class="fa-solid fa-money-bill-wave absolute -bottom-4 -right-2 text-6xl opacity-20"></i>
-                <p class="text-xs font-semibold uppercase opacity-80">Deuda Joven</p>
-                <div class="text-2xl font-bold mt-1">$<span id="debt-youth">0</span></div>
+            <p class="text-xs mt-2 opacity-90" id="weather-alert-msg"></p>
+        </div>
+
+        <!-- Debt Tracker Mejorado -->
+        <div class="flex gap-4 w-full">
+            <div class="flex-1 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-4 text-white shadow-lg debt-card">
+                <p class="text-xs font-semibold uppercase opacity-80 flex items-center gap-2">
+                    <i class="fa-solid fa-user-check"></i> Itzayana
+                </p>
+                <div class="flex justify-between items-end mt-2">
+                    <div>
+                        <p class="text-xs opacity-70 mb-1">Deuda Actual</p>
+                        <div class="text-3xl font-bold">$<span id="debt-itzayana">0</span></div>
+                        <p class="text-xs opacity-70 mt-1">Racha: <span id="streak-itzayana" class="font-bold">0</span> días</p>
+                    </div>
+                    <div class="text-opacity-20 text-6xl"><i class="fa-solid fa-coins"></i></div>
+                </div>
+            </div>
+            <div class="flex-1 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-4 text-white shadow-lg debt-card">
+                <p class="text-xs font-semibold uppercase opacity-80 flex items-center gap-2">
+                    <i class="fa-solid fa-person"></i> Diego
+                </p>
+                <div class="flex justify-between items-end mt-2">
+                    <div>
+                        <p class="text-xs opacity-70 mb-1">Deuda Actual</p>
+                        <div class="text-3xl font-bold">$<span id="debt-diego">0</span></div>
+                        <p class="text-xs opacity-70 mt-1">Racha: <span id="streak-diego" class="font-bold">0</span> días</p>
+                    </div>
+                    <div class="text-opacity-20 text-6xl"><i class="fa-solid fa-money-bill-wave"></i></div>
+                </div>
             </div>
         </div>
     </header>
@@ -176,92 +443,117 @@
             
             <h2 class="text-lg font-bold mb-4 text-gray-800">Tareas de Hoy</h2>
             
-            <!-- Teen Today Card -->
+            <!-- Itzayana Card -->
             <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex justify-center items-center text-lg font-bold">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex justify-center items-center text-xl font-bold flex-shrink-0">
                             <i class="fa-solid fa-child-reaching"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-gray-800">Adolescente</h3>
-                            <p class="text-xs text-gray-500"><span id="days-left-teen">21</span> días restantes</p>
+                            <h3 class="font-bold text-gray-800">Itzayana</h3>
+                            <p class="text-xs text-gray-500"><span id="days-left-itzayana">21</span> días restantes</p>
+                            <p class="text-xs text-amber-600 font-semibold mt-1">🔥 Racha: <span id="streak-display-itzayana">0</span> días</p>
                         </div>
                     </div>
-                    <button onclick="openDayModal('teen', currentDay)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    <button onclick="openDayModal('itzayana', currentDay)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
                         Registrar
                     </button>
                 </div>
                 
-                <div class="w-full bg-gray-100 rounded-full h-2 mb-2">
-                    <div class="bg-blue-500 h-2 rounded-full" id="progress-bar-teen" style="width: 0%"></div>
+                <div class="w-full bg-gray-100 rounded-full h-3 mb-2 progressive-bar">
+                    <div class="bg-blue-500 h-3 rounded-full" id="progress-bar-itzayana" style="width: 0%"></div>
                 </div>
                 <div class="flex justify-between text-xs text-gray-500">
                     <span>Progreso General</span>
-                    <span id="progress-text-teen">0%</span>
+                    <span id="progress-text-itzayana">0%</span>
                 </div>
             </div>
 
-            <!-- Youth Today Card -->
+            <!-- Diego Card -->
             <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex justify-center items-center text-lg font-bold">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex justify-center items-center text-xl font-bold flex-shrink-0">
                             <i class="fa-solid fa-person-running"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-gray-800">Joven</h3>
-                            <p class="text-xs text-gray-500"><span id="days-left-youth">28</span> días restantes</p>
+                            <h3 class="font-bold text-gray-800">Diego</h3>
+                            <p class="text-xs text-gray-500"><span id="days-left-diego">28</span> días restantes</p>
+                            <p class="text-xs text-amber-600 font-semibold mt-1">🔥 Racha: <span id="streak-display-diego">0</span> días</p>
                         </div>
                     </div>
-                    <button onclick="openDayModal('youth', currentDay)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    <button onclick="openDayModal('diego', currentDay)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
                         Registrar
                     </button>
                 </div>
                 
-                <div class="w-full bg-gray-100 rounded-full h-2 mb-2">
-                    <div class="bg-emerald-500 h-2 rounded-full" id="progress-bar-youth" style="width: 0%"></div>
+                <div class="w-full bg-gray-100 rounded-full h-3 mb-2 progressive-bar">
+                    <div class="bg-emerald-500 h-3 rounded-full" id="progress-bar-diego" style="width: 0%"></div>
                 </div>
                 <div class="flex justify-between text-xs text-gray-500">
                     <span>Progreso General</span>
-                    <span id="progress-text-youth">0%</span>
+                    <span id="progress-text-diego">0%</span>
                 </div>
             </div>
 
             <!-- Chart Section -->
             <h2 class="text-lg font-bold mt-8 mb-4 text-gray-800">Rendimiento Semanal</h2>
-            <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 mb-6">
                 <canvas id="performanceChart" height="200"></canvas>
+            </div>
+
+            <!-- Gráfico Radar -->
+            <h2 class="text-lg font-bold mt-8 mb-4 text-gray-800">Balance de Hábitos</h2>
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+                <canvas id="radarChart" height="200"></canvas>
             </div>
         </section>
 
         <!-- CALENDARS SECTION -->
         <section id="sec-calendar" class="page-section">
             
-            <!-- Teen Calendar -->
-            <h2 class="text-xl font-bold mb-2 flex items-center gap-2 text-blue-600">
-                <i class="fa-solid fa-calendar-day"></i> Calendario Adolescente
-            </h2>
-            <p class="text-sm text-gray-500 mb-4">Reto de 21 Días</p>
-            <div class="grid grid-cols-7 gap-2 mb-8" id="grid-teen">
-                <!-- JS Injects Grid -->
+            <!-- Itzayana Calendar -->
+            <div class="mb-8">
+                <div class="flex items-center gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-blue-600">
+                        <i class="fa-solid fa-calendar-day"></i> Itzayana
+                    </h2>
+                    <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">21 Días</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-hourglass-end"></i>
+                    <span id="calendar-info-itzayana">Cargando...</span>
+                </p>
+                <div class="grid grid-cols-7 gap-2 mb-4" id="grid-itzayana">
+                    <!-- JS Injects Grid -->
+                </div>
             </div>
 
-            <!-- Youth Calendar -->
-            <h2 class="text-xl font-bold mb-2 flex items-center gap-2 text-emerald-600">
-                <i class="fa-solid fa-calendar-day"></i> Calendario Joven
-            </h2>
-            <p class="text-sm text-gray-500 mb-4">Reto de 28 Días</p>
-            <div class="grid grid-cols-7 gap-2 mb-8" id="grid-youth">
-                 <!-- JS Injects Grid -->
+            <!-- Diego Calendar -->
+            <div class="mb-8">
+                <div class="flex items-center gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-emerald-600">
+                        <i class="fa-solid fa-calendar-day"></i> Diego
+                    </h2>
+                    <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold">28 Días</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-hourglass-end"></i>
+                    <span id="calendar-info-diego">Cargando...</span>
+                </p>
+                <div class="grid grid-cols-7 gap-2 mb-4" id="grid-diego">
+                     <!-- JS Injects Grid -->
+                </div>
             </div>
 
             <div class="bg-white p-4 rounded-xl shadow-sm text-sm border border-gray-100">
-                <h4 class="font-bold mb-2">Leyenda</h4>
-                <div class="flex gap-4">
-                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-green-500"></div> Perfecto</div>
-                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div> Fallido</div>
-                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-gray-200"></div> Pendiente</div>
+                <h4 class="font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-info-circle"></i> Leyenda</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-lg bg-green-500"></div> <span>Perfecto</span></div>
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-lg bg-red-500"></div> <span>Incompleto</span></div>
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-lg bg-amber-400"></div> <span>Hoy</span></div>
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-lg bg-gray-200"></div> <span>Futuro</span></div>
                 </div>
             </div>
         </section>
@@ -270,328 +562,381 @@
         <section id="sec-schedule" class="page-section">
             
             <!-- Tab Buttons -->
-            <div class="flex bg-gray-200 p-1 rounded-xl mb-6">
-                <button onclick="toggleSchedule('teen')" id="tab-teen" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow text-blue-600 transition">Adolescente (12-13)</button>
-                <button onclick="toggleSchedule('youth')" id="tab-youth" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 transition">Joven (17)</button>
+            <div class="flex gap-2 mb-6">
+                <button onclick="toggleSchedule('itzayana')" id="tab-itzayana" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow text-blue-600 transition border-2 border-blue-200">
+                    <i class="fa-solid fa-child-reaching"></i> Itzayana
+                </button>
+                <button onclick="toggleSchedule('diego')" id="tab-diego" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 transition border-2 border-transparent">
+                    <i class="fa-solid fa-person-running"></i> Diego
+                </button>
             </div>
 
-            <!-- Teen Info -->
-            <div id="info-teen">
-                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500 p-5 rounded-r-xl mb-6">
-                    <h3 class="font-bold text-blue-800 mb-3"><i class="fa-solid fa-target"></i> Reto de 3 Semanas (21 Días)</h3>
-                    <p class="text-xs text-blue-900 mb-3">Objetivo: Establecer horarios regulares, asegurar nutrientes para el crecimiento y hacer del movimiento un hábito divertido, sin presiones estéticas extremas.</p>
-                    <div class="bg-white p-3 rounded-lg text-xs text-blue-900 space-y-1">
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Nutrición:</strong> Plato: 50% verduras, 25% proteína, 25% carbos.</span></div>
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Hidratación:</strong> 6-8 vasos de agua diarios. Cero refrescos L-V.</span></div>
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Movimiento:</strong> Circuito 3 días/sem: Sentadillas, lagartijas, jumping jacks, puente, plancha.</span></div>
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Descanso:</strong> 9-10 horas diarias para crecer y recuperarse.</span></div>
-                    </div>
+            <!-- Itzayana Info -->
+            <section id="info-itzayana" class="mb-10">
+    <!-- Encabezado Itzayana -->
+    <article class="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500 p-5 rounded-r-xl mb-6 shadow-sm">
+        <h3 class="font-bold text-blue-800 mb-3 text-lg">
+            <i class="fa-solid fa-target" aria-hidden="true"></i> Reto de 3 Semanas (21 Días)
+        </h3>
+        <p class="text-sm text-blue-900 mb-4 leading-relaxed">
+            <strong>Enfoque:</strong> Creación de hábitos, mantener la energía estable, diversión y cultivar el amor propio, dejando fuera presiones estéticas extremas.
+        </p>
+        <div class="bg-white p-4 rounded-lg text-sm text-blue-900 space-y-2 shadow-inner">
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Nutrición:</strong> No saltarse comidas. Regla del plato: 50% verduras, 25% proteína, 25% carbos.</span></div>
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Hidratación:</strong> Llevar termo de 1L a la escuela; tomar pequeños sorbos constantes.</span></div>
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Movimiento:</strong> Circuito 3 días/sem. Resto de días: bici, baile o caminata activa.</span></div>
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Descanso:</strong> 9-10 horas diarias para crecer, reparar tejidos y estar de buen humor.</span></div>
+        </div>
+    </article>
+
+    <!-- Pestañas Itzayana -->
+    <nav class="guide-tabs flex flex-wrap gap-2 mb-6">
+        <button class="guide-tab-btn active px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-blue-100 focus:ring-2 focus:ring-blue-400" onclick="switchGuideTab('itzayana', 'horario')">
+            <i class="fa-solid fa-clock" aria-hidden="true"></i> Horario
+        </button>
+        <button class="guide-tab-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-blue-100 focus:ring-2 focus:ring-blue-400" onclick="switchGuideTab('itzayana', 'circuito')">
+            <i class="fa-solid fa-dumbbell" aria-hidden="true"></i> Circuito
+        </button>
+        <button class="guide-tab-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-blue-100 focus:ring-2 focus:ring-blue-400" onclick="switchGuideTab('itzayana', 'compras')">
+            <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i> Compras
+        </button>
+        <button class="guide-tab-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-blue-100 focus:ring-2 focus:ring-blue-400" onclick="switchGuideTab('itzayana', 'tips')">
+            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Tips
+        </button>
+    </nav>
+
+    <!-- Contenido: Horario Itzayana -->
+    <div id="guide-itzayana-horario" class="transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-calendar-days text-blue-600" aria-hidden="true"></i> Horario de Lunes a Viernes</h3>
+        <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-blue-50 border-b border-blue-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-bold text-blue-800">Hora</th>
+                            <th class="px-4 py-3 text-left font-bold text-blue-800">Actividad</th>
+                            <th class="px-4 py-3 text-left font-bold text-blue-800">Detalles y Ejemplos</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr class="hover:bg-blue-50/80 transition-colors"><td class="px-4 py-3 font-bold text-blue-600 whitespace-nowrap">06:30 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Despertar e Hidratar</td><td class="px-4 py-3 text-gray-600">1 vaso grande de agua + estirar brazos al techo y tocar puntas de los pies (5 min).</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-amber-600 whitespace-nowrap">07:00 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Desayuno Campeón</td><td class="px-4 py-3 text-gray-600">2 huevos con espinacas, pan integral y manzana; o tazón de avena, leche y plátano.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors"><td class="px-4 py-3 font-bold text-gray-600 whitespace-nowrap">08:00 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Escuela/Clases</td><td class="px-4 py-3 text-gray-600">Llevar termo de 1L. Tomar pequeños sorbos entre clases.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-green-600 whitespace-nowrap">11:00 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Snack Escolar</td><td class="px-4 py-3 text-gray-600">Jícama/zanahoria con limón y chilito, o puñado de nueces y almendras.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors"><td class="px-4 py-3 font-bold text-amber-600 whitespace-nowrap">02:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Comida Principal</td><td class="px-4 py-3 text-gray-600">Regla del plato: mitad vegetales, cuarto pollo/queso, cuarto arroz o 2 tortillas.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-gray-800 whitespace-nowrap">04:00 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Deberes y Hobbies</td><td class="px-4 py-3 text-gray-600">Tiempo de tareas, dibujar, leer o escuchar música.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors"><td class="px-4 py-3 font-bold text-red-600 whitespace-nowrap"><i class="fa-solid fa-fire mr-1" aria-hidden="true"></i>05:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Ejercicio (45 min)</td><td class="px-4 py-3 text-gray-600">L,M,V: Circuito en casa | M,J: Andar en bici, bailar con videos o caminata.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-amber-600 whitespace-nowrap">07:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Cena Ligera</td><td class="px-4 py-3 text-gray-600">2 quesadillas con pico de gallo, o licuado de fresas con sándwich de pavo.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors"><td class="px-4 py-3 font-bold text-gray-800 whitespace-nowrap">08:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Desconexión</td><td class="px-4 py-3 text-gray-600">Apagar pantallas y celular. Preparar mochila y ropa del día siguiente.</td></tr>
+                        <tr class="hover:bg-blue-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-indigo-600 whitespace-nowrap"><i class="fa-solid fa-moon mr-1" aria-hidden="true"></i>09:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Dormir</td><td class="px-4 py-3 text-gray-600">9-10 horas de sueño continuo y reparador.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido: Circuito Itzayana -->
+    <div id="guide-itzayana-circuito" class="hidden transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-dumbbell text-red-500" aria-hidden="true"></i> Circuito de Ejercicio (45 min)</h3>
+        <p class="text-sm text-gray-600 mb-4">Realizar de 3 a 4 rondas. Descansa 1 minuto entre cada ronda.</p>
+        <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 border border-red-100 space-y-4 shadow-sm">
+            <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-red-400">
+                <div class="font-bold text-red-600 mb-2 text-base">🏃 Calentamiento (5 min)</div>
+                <p class="text-gray-700 text-sm">Trote ligero en tu lugar, giros suaves de cuello, hombros, cadera y rodillas.</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-orange-400">
+                <div class="font-bold text-orange-600 mb-3 text-base">💪 Circuito Principal (35 min)</div>
+                <ul class="text-gray-700 text-sm space-y-3">
+                    <li><strong>1. Sentadillas (15 reps):</strong> Pies a lo ancho de hombros. Baja como si te sentaras en una silla. Espalda recta. Rodillas no se juntan al subir.</li>
+                    <li><strong>2. Lagartijas modificadas (10 reps):</strong> Apoya rodillas en tapete. Manos más abiertas que los hombros. Baja el pecho y empuja fuerte.</li>
+                    <li><strong>3. Jumping Jacks (20 reps):</strong> Saltos abriendo/cerrando brazos y piernas. Ritmo constante, respira por la nariz.</li>
+                    <li><strong>4. Puente de Glúteo (15 reps):</strong> Acostada boca arriba, rodillas dobladas. Levanta cadera al techo, aprieta glúteos 2 segs y baja lento.</li>
+                    <li><strong>5. Plancha (20-30 seg):</strong> Apoya antebrazos. Cuerpo en línea recta. ¡Aprieta abdomen y no dejes caer la cadera!</li>
+                </ul>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-blue-400">
+                <div class="font-bold text-blue-600 mb-2 text-base">❄️ Enfriamiento (5 min)</div>
+                <p class="text-gray-700 text-sm">Estiramientos estáticos (tocar punta de pies, estirar brazos) sosteniendo 20 segundos mientras respiras profundo.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido: Compras Itzayana -->
+    <div id="guide-itzayana-compras" class="hidden transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-basket-shopping text-green-600" aria-hidden="true"></i> Lista de Compras Inteligente</h3>
+        <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
+            <div class="bg-blue-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-blue-700 mb-3 border-b border-blue-200 pb-2">🥚 Proteínas</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Huevo</li>
+                    <li>Pechuga de pollo</li>
+                    <li>Queso panela</li>
+                    <li>Atún en agua</li>
+                    <li>Frijoles negros y lentejas</li>
+                </ul>
+            </div>
+            <div class="bg-orange-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-orange-700 mb-3 border-b border-orange-200 pb-2">🌾 Carbos & Grasas</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Avena natural (sin azúcar)</li>
+                    <li>Tortillas de maíz y Pan integral</li>
+                    <li>Arroz y Tostadas horneadas</li>
+                    <li>Nueces y almendras (Grasa sana)</li>
+                    <li>Aguacate (Grasa sana)</li>
+                </ul>
+            </div>
+            <div class="bg-red-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-red-700 mb-3 border-b border-red-200 pb-2">🍎 Frutas</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Manzanas</li>
+                    <li>Plátanos</li>
+                    <li>Naranjas</li>
+                    <li>Fresas</li>
+                    <li>Fruta de temporada al gusto</li>
+                </ul>
+            </div>
+            <div class="bg-green-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-green-700 mb-3 border-b border-green-200 pb-2">🥬 Verduras (¡Sin límite!)</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Zanahoria y Pepino</li>
+                    <li>Jícama</li>
+                    <li>Espinaca y Lechuga</li>
+                    <li>Jitomate</li>
+                    <li>Calabacitas</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido: Tips Itzayana -->
+    <div id="guide-itzayana-tips" class="hidden transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-lightbulb text-yellow-500" aria-hidden="true"></i> Tips de Oro</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-gradient-to-r from-yellow-50 to-amber-50 p-5 rounded-xl border border-yellow-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-yellow-800 mb-2 text-base"><i class="fa-solid fa-ear-listen mr-2" aria-hidden="true"></i>Escucha a tu cuerpo</p>
+                <p class="text-sm text-yellow-900 leading-relaxed">Si un día sientes mucha hambre, come porciones un poco más grandes de proteína y verduras. Estás creciendo y tu cuerpo necesita su combustible.</p>
+            </div>
+            <div class="bg-gradient-to-r from-pink-50 to-rose-50 p-5 rounded-xl border border-pink-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-pink-800 mb-2 text-base"><i class="fa-solid fa-heart mr-2" aria-hidden="true"></i>Cero Comparaciones</p>
+                <p class="text-sm text-pink-900 leading-relaxed">Las redes sociales no son la vida real. Tu objetivo es sentirte fuerte, ágil y feliz en tu propio cuerpo, no encajar en un molde irreal.</p>
+            </div>
+            <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-5 rounded-xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-emerald-800 mb-2 text-base"><i class="fa-solid fa-pizza-slice mr-2" aria-hidden="true"></i>Regla del 80/20</p>
+                <p class="text-sm text-emerald-900 leading-relaxed">Come sano y nutritivo el 80% del tiempo. El otro 20% (fines de semana), disfruta de tus antojos o postres sin ninguna culpa.</p>
+            </div>
+            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-5 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-blue-800 mb-2 text-base"><i class="fa-solid fa-droplet mr-2" aria-hidden="true"></i>Hidratación es clave</p>
+                <p class="text-sm text-blue-900 leading-relaxed">Beber suficiente agua previene el cansancio y los dolores de cabeza en la escuela. Haz que tu termo sea tu mejor accesorio.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN DIEGO -->
+<section id="info-diego" class="hidden mb-10">
+    <!-- Encabezado Diego -->
+    <article class="bg-gradient-to-r from-emerald-50 to-teal-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-6 shadow-sm">
+        <h3 class="font-bold text-emerald-800 mb-3 text-lg">
+            <i class="fa-solid fa-target" aria-hidden="true"></i> Reto de 4 Semanas (28 Días)
+        </h3>
+        <p class="text-sm text-emerald-900 mb-4 leading-relaxed">
+            <strong>Enfoque:</strong> Aprovechar el pico hormonal adolescente para ganar fuerza real, mejorar el rendimiento deportivo y construir disciplina.
+        </p>
+        <div class="bg-white p-4 rounded-lg text-sm text-emerald-900 space-y-2 shadow-inner">
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Nutrición:</strong> Proteína constructora en cada comida. Carbos como gasolina (antes/después de entrenar).</span></div>
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Hidratación:</strong> 2 a 3 litros diarios de agua (músculo hidratado = músculo fuerte).</span></div>
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Entrenamiento:</strong> 4-5 días de Sobrecarga Progresiva (Fuerza con peso) + Cardio explosivo.</span></div>
+            <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1" aria-hidden="true"></i><span><strong>Descanso:</strong> 8-9 horas. El músculo se rompe entrenando, pero crece durmiendo.</span></div>
+        </div>
+    </article>
+
+    <!-- Pestañas Diego -->
+    <nav class="guide-tabs flex flex-wrap gap-2 mb-6">
+        <button class="guide-tab-btn active px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-emerald-100 focus:ring-2 focus:ring-emerald-400" onclick="switchGuideTab('diego', 'horario')">
+            <i class="fa-solid fa-clock" aria-hidden="true"></i> Horario
+        </button>
+        <button class="guide-tab-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-emerald-100 focus:ring-2 focus:ring-emerald-400" onclick="switchGuideTab('diego', 'rutina')">
+            <i class="fa-solid fa-dumbbell" aria-hidden="true"></i> Rutina
+        </button>
+        <button class="guide-tab-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-emerald-100 focus:ring-2 focus:ring-emerald-400" onclick="switchGuideTab('diego', 'compras')">
+            <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i> Compras
+        </button>
+        <button class="guide-tab-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-emerald-100 focus:ring-2 focus:ring-emerald-400" onclick="switchGuideTab('diego', 'tips')">
+            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Tips
+        </button>
+        <button class="guide-tab-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-emerald-100 focus:ring-2 focus:ring-emerald-400" onclick="switchGuideTab('diego', 'pomodoro')">
+            <i class="fa-solid fa-timer" aria-hidden="true"></i> Pomodoro
+        </button>
+    </nav>
+
+    <!-- Contenido: Horario Diego -->
+    <div id="guide-diego-horario" class="transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-calendar-days text-emerald-600" aria-hidden="true"></i> Horario de Lunes a Viernes</h3>
+        <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-emerald-50 border-b border-emerald-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-bold text-emerald-800">Hora</th>
+                            <th class="px-4 py-3 text-left font-bold text-emerald-800">Actividad</th>
+                            <th class="px-4 py-3 text-left font-bold text-emerald-800">Detalles y Ejemplos</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr class="hover:bg-emerald-50/80 transition-colors"><td class="px-4 py-3 font-bold text-emerald-600 whitespace-nowrap">06:30 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Despertar Activo</td><td class="px-4 py-3 text-gray-600">2 vasos de agua + 5 min de movilidad articular.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-amber-600 whitespace-nowrap">07:00 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Desayuno Fuerte</td><td class="px-4 py-3 text-gray-600">3 huevos, pan integral y aguacate; o licuado con plátano, crema de cacahuate y avena.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors"><td class="px-4 py-3 font-bold text-gray-600 whitespace-nowrap">08:00 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Escuela/Clases</td><td class="px-4 py-3 text-gray-600">Hidratación. Meta: Terminar al menos 1.5 litros antes de salir.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-green-600 whitespace-nowrap">11:30 AM</td><td class="px-4 py-3 font-semibold text-gray-800">Snack</td><td class="px-4 py-3 text-gray-600">Yogurt griego natural (alto en proteína) con frutos rojos o un plátano.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors"><td class="px-4 py-3 font-bold text-amber-600 whitespace-nowrap">02:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Comida (Pre-entreno)</td><td class="px-4 py-3 text-gray-600">Bistec magro o pollo asado, arroz/pasta integral y mucho brócoli o pimientos.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-red-600 whitespace-nowrap"><i class="fa-solid fa-fire mr-1" aria-hidden="true"></i>04:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Entrenamiento (1 hora)</td><td class="px-4 py-3 text-gray-600">Rutina de Fuerza (sobrecarga con mochila) + Cardio HIIT al final.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors"><td class="px-4 py-3 font-bold text-purple-600 whitespace-nowrap">05:45 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Snack Post-entreno</td><td class="px-4 py-3 text-gray-600">Lata de atún con galletas habaneras o licuado de leche con plátano para reparar músculo.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-gray-800 whitespace-nowrap">06:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Estudio y Descanso</td><td class="px-4 py-3 text-gray-600">Tareas académicas, concentración y responsabilidades.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors"><td class="px-4 py-3 font-bold text-amber-600 whitespace-nowrap">08:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Cena de Recuperación</td><td class="px-4 py-3 text-gray-600">Fajitas de pollo con pimientos, tortillas de maíz y guacamole.</td></tr>
+                        <tr class="hover:bg-emerald-50/80 transition-colors bg-gray-50/50"><td class="px-4 py-3 font-bold text-indigo-600 whitespace-nowrap"><i class="fa-solid fa-moon mr-1" aria-hidden="true"></i>10:30 PM</td><td class="px-4 py-3 font-semibold text-gray-800">Dormir</td><td class="px-4 py-3 text-gray-600">8-9 horas. Pico máximo de liberación de hormona de crecimiento.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido: Rutina Diego -->
+    <div id="guide-diego-rutina" class="hidden transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-dumbbell text-emerald-600" aria-hidden="true"></i> Rutina de Fuerza (Sobrecarga Progresiva)</h3>
+        <p class="text-sm text-gray-600 mb-4">Usa una mochila resistente con libros o botellas de agua. Haz 4 series, descansando 1.5 min entre ellas.</p>
+        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100 space-y-4 shadow-sm">
+            <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-yellow-400">
+                <div class="font-bold text-yellow-600 mb-2 text-base">🏃 Calentamiento (10 min)</div>
+                <p class="text-gray-700 text-sm">Trotar en tu lugar, jumping jacks, rotaciones amplias de brazos hacia adelante y atrás.</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-orange-400">
+                <div class="font-bold text-orange-600 mb-3 text-base">💪 Fuerza con Peso (30 min)</div>
+                <ul class="text-gray-700 text-sm space-y-3">
+                    <li><strong>1. Sentadilla con Mochila (12 reps):</strong> Mochila a la espalda. Baja profundo, pecho erguido, empuja con los talones.</li>
+                    <li><strong>2. Flexiones / Lagartijas (Al fallo, max 15):</strong> Pecho roza el suelo, codos a 45 grados. Si es fácil, sube los pies a una silla.</li>
+                    <li><strong>3. Remo con Mochila (12 reps x brazo):</strong> Torso inclinado al frente, espalda recta. Jala la mochila hacia la cadera y baja lento.</li>
+                    <li><strong>4. Press Militar (12 reps):</strong> De pie, empuja la mochila desde tu pecho hasta estirar los brazos arriba. No arquees la espalda baja.</li>
+                </ul>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-red-500">
+                <div class="font-bold text-red-600 mb-2 text-base">⚡ Cardio HIIT (15 min)</div>
+                <p class="text-gray-700 text-sm"><strong>5 Ciclos de:</strong> 30 seg de Burpees a máxima velocidad seguidos de 30 seg caminando para recuperar aliento.</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-blue-400">
+                <div class="font-bold text-blue-600 mb-2 text-base">❄️ Enfriamiento (5 min)</div>
+                <p class="text-gray-700 text-sm">Estirar a fondo pecho, espalda y piernas. Respiraciones profundas para bajar pulsaciones.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido: Compras Diego -->
+    <div id="guide-diego-compras" class="hidden transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-basket-shopping text-emerald-600" aria-hidden="true"></i> Lista de Compras (Rendimiento)</h3>
+        <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
+            <div class="bg-emerald-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-emerald-700 mb-3 border-b border-emerald-200 pb-2">🥩 Proteínas</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Huevos enteros (¡muchos!)</li>
+                    <li>Pechuga de pollo y Res magra</li>
+                    <li>Latas de atún</li>
+                    <li>Yogurt griego natural</li>
+                    <li>Leche</li>
+                </ul>
+            </div>
+            <div class="bg-orange-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-orange-700 mb-3 border-b border-orange-200 pb-2">🍠 Carbos (Gasolina)</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Avena y Arroz integral/blanco</li>
+                    <li>Pasta y Pan integral</li>
+                    <li>Papa y Camote</li>
+                    <li>Tortillas de maíz</li>
+                </ul>
+            </div>
+            <div class="bg-red-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-red-700 mb-3 border-b border-red-200 pb-2">🍌 Frutas (Pre/Post)</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Plátanos (Ideales post-entreno)</li>
+                    <li>Manzanas y Frutos rojos</li>
+                    <li>Melón y Sandía</li>
+                </ul>
+            </div>
+            <div class="bg-green-50/50 p-4 rounded-lg">
+                <h4 class="font-bold text-green-700 mb-3 border-b border-green-200 pb-2">🥦 Verduras & Grasas</h4>
+                <ul class="text-gray-700 space-y-2 list-disc pl-5">
+                    <li>Brócoli (Top para músculo)</li>
+                    <li>Espinacas y Pimientos</li>
+                    <li>Aguacate (Grasa sana)</li>
+                    <li>Crema de cacahuate (Sin azúcar)</li>
+                    <li>Nueces</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido: Tips Diego -->
+    <div id="guide-diego-tips" class="hidden transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-lightbulb text-amber-500" aria-hidden="true"></i> Consejos Nivel Avanzado</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 p-5 rounded-xl border border-red-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-red-800 mb-2 text-base"><i class="fa-solid fa-fire mr-2" aria-hidden="true"></i>Prioriza la Técnica</p>
+                <p class="text-sm text-red-900 leading-relaxed">Mejor 8 lagartijas perfectas bajando al suelo, que 20 hechas a la mitad. La técnica correcta hace crecer el músculo y previene lesiones; deja el ego a un lado.</p>
+            </div>
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-emerald-800 mb-2 text-base"><i class="fa-solid fa-dumbbell mr-2" aria-hidden="true"></i>Sobrecarga Progresiva</p>
+                <p class="text-sm text-emerald-900 leading-relaxed">Si esta semana hacer sentadillas con 3 libros fue fácil, la próxima mete 4. Para que tu cuerpo cambie, debes obligarlo a adaptarse exigiendo más peso o repeticiones.</p>
+            </div>
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-purple-800 mb-2 text-base"><i class="fa-solid fa-moon mr-2" aria-hidden="true"></i>El Descanso Construye</p>
+                <p class="text-sm text-purple-900 leading-relaxed">El músculo no crece entrenando, ahí lo rompes. Crece mientras duermes y cuando asimila proteína. Si no duermes tus 8 horas, frenarás drásticamente tus resultados.</p>
+            </div>
+            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-5 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow">
+                <p class="font-bold text-blue-800 mb-2 text-base"><i class="fa-solid fa-droplet mr-2" aria-hidden="true"></i>Hidratación Estratégica</p>
+                <p class="text-sm text-blue-900 leading-relaxed">Un músculo deshidratado pierde hasta el 20% de su fuerza. Bebe agua antes, durante (pequeños sorbos) y después de tu entrenamiento intenso.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- POMODORO SECTION -->
+    <div id="guide-diego-pomodoro" class="hidden transition-opacity duration-300">
+        <h3 class="font-bold mb-4 text-gray-800 text-lg"><i class="fa-solid fa-timer text-red-500" aria-hidden="true"></i> Temporizador Pomodoro</h3>
+        <p class="text-sm text-gray-600 mb-4 text-center">Técnica científica: 25 min de enfoque + 5 min de descanso = Máxima productividad.</p>
+        
+        <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border border-red-100 shadow-sm">
+            <div class="flex flex-col items-center gap-6">
+                <div class="pomodoro-circle">
+                    <svg width="150" height="150" viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="70" fill="none" stroke="#f3f4f6" stroke-width="8"/>
+                        <circle id="pomodoroProgress" cx="75" cy="75" r="70" fill="none" stroke="#ef4444" stroke-width="8" style="stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 0.35s linear;"/>
+                    </svg>
+                    <div class="pomodoro-time" id="pomodoroTime">25:00</div>
+                </div>
+                
+                <div class="flex gap-3 w-full">
+                    <button onclick="startPomodoro()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition">
+                        <i class="fa-solid fa-play mr-2"></i>Iniciar
+                    </button>
+                    <button onclick="resetPomodoro()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition">
+                        <i class="fa-solid fa-redo mr-2"></i>Reset
+                    </button>
                 </div>
 
-                <h3 class="font-bold mb-4 text-gray-800"><i class="fa-solid fa-calendar-days"></i> Horario de Lunes a Viernes</h3>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-blue-50">
-                                <tr>
-                                    <th class="px-3 py-2 text-left font-bold text-blue-800">Hora</th>
-                                    <th class="px-3 py-2 text-left font-bold text-blue-800">Actividad</th>
-                                    <th class="px-3 py-2 text-left font-bold text-blue-800">Detalles</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 text-xs">
-                                <tr class="hover:bg-blue-50/50">
-                                    <td class="px-3 py-2 font-bold text-blue-600">06:30 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Despertar e Hidratación</td>
-                                    <td class="px-3 py-2 text-gray-600">Tomar 1 vaso grande de agua al levantarse + 5 min estiramiento</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
-                                    <td class="px-3 py-2 font-bold text-amber-600">07:00 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Desayuno</td>
-                                    <td class="px-3 py-2 text-gray-600">Ej: 2 huevos revueltos, 1 tortilla, 1 manzana</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50">
-                                    <td class="px-3 py-2 font-bold text-gray-600">08:00 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Escuela/Clases</td>
-                                    <td class="px-3 py-2 text-gray-600">Llevar botella de agua para beber durante la mañana</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
-                                    <td class="px-3 py-2 font-bold text-green-600">11:00 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Snack Escolar</td>
-                                    <td class="px-3 py-2 text-gray-600">Ej: Puñado de nueces, almendras o jícama con limón</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50">
-                                    <td class="px-3 py-2 font-bold text-amber-600">02:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Comida Principal</td>
-                                    <td class="px-3 py-2 text-gray-600">Ej: Pechuga de pollo asada, arroz, ensalada abundante</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
-                                    <td class="px-3 py-2 font-bold text-gray-600">04:00 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Deberes y Pasatiempos</td>
-                                    <td class="px-3 py-2 text-gray-600">Hacer tarea escolar y disfrutar de tiempo libre</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50">
-                                    <td class="px-3 py-2 font-bold text-red-600"><i class="fa-solid fa-fire"></i> 05:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Ejercicio (45 min)</td>
-                                    <td class="px-3 py-2 text-gray-600">L,M,V: Circuito | M,J: Jugar, patinar o bici</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
-                                    <td class="px-3 py-2 font-bold text-amber-600">07:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Cena Ligera</td>
-                                    <td class="px-3 py-2 text-gray-600">Ej: Avena con leche y plátano, o quesadillas con pico de gallo</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50">
-                                    <td class="px-3 py-2 font-bold text-gray-600">08:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Desconexión</td>
-                                    <td class="px-3 py-2 text-gray-600">Apagar pantallas, preparar mochila y ropa</td>
-                                </tr>
-                                <tr class="hover:bg-blue-50/50 bg-blue-50/30">
-                                    <td class="px-3 py-2 font-bold text-indigo-600"><i class="fa-solid fa-moon"></i> 09:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Dormir</td>
-                                    <td class="px-3 py-2 text-gray-600">9-10 horas de sueño para crecer y recuperarse</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-dumbbell"></i> Circuito de Ejercicio (45 min) - L, M, V</h3>
-                <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 border border-red-100 mb-6">
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-bold text-red-600 mb-1">🏃 Calentamiento (5 min)</div>
-                            <p class="text-gray-700">Trotar en el sitio, saltar la cuerda</p>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-bold text-orange-600 mb-1">💪 Circuito (35 min)</div>
-                            <p class="text-gray-700"><strong>3 rondas:</strong> 15 sentadillas, 10 lagartijas, 20 jumping jacks, 15 seg puente, 20 seg plancha</p>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm col-span-2">
-                            <div class="font-bold text-blue-600 mb-1">❄️ Enfriamiento (5 min)</div>
-                            <p class="text-gray-700">Estiramiento suave de piernas, brazos y espalda + respiración profunda</p>
-                        </div>
-                    </div>
-                </div>
-
-                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-basket-shopping"></i> Lista de Compras Sugerida</h3>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div>
-                            <h4 class="font-bold text-blue-700 mb-2">🥚 Proteínas</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Huevo</li>
-                                <li>Pechuga de pollo</li>
-                                <li>Atún en agua</li>
-                                <li>Queso panela</li>
-                                <li>Frijoles y lentejas</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-orange-700 mb-2">🌾 Carbohidratos</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Avena</li>
-                                <li>Tortillas de maíz</li>
-                                <li>Pan integral</li>
-                                <li>Arroz</li>
-                                <li>Papas</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-red-700 mb-2">🍎 Frutas</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Manzanas</li>
-                                <li>Plátanos</li>
-                                <li>Naranjas</li>
-                                <li>Fresas</li>
-                                <li>Fruta de temporada</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-green-700 mb-2">🥬 Verduras</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Zanahoria</li>
-                                <li>Pepino</li>
-                                <li>Jícama</li>
-                                <li>Lechuga</li>
-                                <li>Espinaca y jitomate</li>
-                            </ul>
-                        </div>
-                        <div class="col-span-2">
-                            <h4 class="font-bold text-yellow-700 mb-2">🥑 Grasas Buenas</h4>
-                            <p class="text-gray-700">Aguacate • Nueces • Almendras • Crema de cacahuate (sin azúcar)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
-                    <h4 class="font-bold text-amber-800 mb-2"><i class="fa-solid fa-sun"></i> Regla de Fin de Semana</h4>
-                    <p class="text-xs text-amber-900">Sábado o domingo: 1 "comida libre" (pizza, hamburguesa, tacos) para disfrutar con amigos sin remordimientos. Retoma agua y buenos hábitos en la siguiente comida. Descanso completo del ejercicio formal los domingos.</p>
+                <div class="text-center text-sm text-gray-600 w-full">
+                    <p id="pomodoroMode" class="font-bold text-red-600 mb-2">Modo: TRABAJO</p>
+                    <p class="text-xs">Sesiones completadas hoy: <span id="pomodoroCount" class="font-bold">0</span></p>
                 </div>
             </div>
+        </div>
 
-            <!-- Youth Info -->
-            <div id="info-youth" class="hidden">
-                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-6">
-                    <h3 class="font-bold text-emerald-800 mb-3"><i class="fa-solid fa-target"></i> Reto de 4 Semanas (28 Días)</h3>
-                    <p class="text-xs text-emerald-900 mb-3">Objetivo: Aprovechar su etapa hormonal para ganar fuerza, bajar porcentaje de grasa, mejorar rendimiento físico y mantener energía alta para el estudio.</p>
-                    <div class="bg-white p-3 rounded-lg text-xs text-emerald-900 space-y-1">
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Nutrición:</strong> Proteína en cada comida. Carbos estratégicos (antes/después de entrenar).</span></div>
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Hidratación:</strong> 2-3 litros diarios de agua.</span></div>
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Entrenamiento:</strong> 4-5 días: Fuerza + Cardio HIIT (1 hora diaria).</span></div>
-                        <div class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Descanso:</strong> 8 horas de sueño profundo para crear músculo.</span></div>
-                    </div>
-                </div>
-
-                <h3 class="font-bold mb-4 text-gray-800"><i class="fa-solid fa-calendar-days"></i> Horario de Lunes a Viernes</h3>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-emerald-50">
-                                <tr>
-                                    <th class="px-3 py-2 text-left font-bold text-emerald-800">Hora</th>
-                                    <th class="px-3 py-2 text-left font-bold text-emerald-800">Actividad</th>
-                                    <th class="px-3 py-2 text-left font-bold text-emerald-800">Detalles</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 text-xs">
-                                <tr class="hover:bg-emerald-50/50">
-                                    <td class="px-3 py-2 font-bold text-emerald-600">06:30 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Despertar e Hidratación</td>
-                                    <td class="px-3 py-2 text-gray-600">Tomar 1-2 vasos de agua natural + estirar 5 minutos</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
-                                    <td class="px-3 py-2 font-bold text-amber-600">07:00 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Desayuno Fuerte</td>
-                                    <td class="px-3 py-2 text-gray-600">3 huevos, 2 panes integrales tostados, medio aguacate</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50">
-                                    <td class="px-3 py-2 font-bold text-gray-600">08:00 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Escuela/Clases</td>
-                                    <td class="px-3 py-2 text-gray-600">Mantener cuerpo hidratado (meta: 2-3 litros al día)</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
-                                    <td class="px-3 py-2 font-bold text-green-600">11:30 AM</td>
-                                    <td class="px-3 py-2 font-semibold">Snack (Opcional)</td>
-                                    <td class="px-3 py-2 text-gray-600">Yogurt griego sin azúcar o una fruta si hay hambre</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50">
-                                    <td class="px-3 py-2 font-bold text-amber-600">02:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Comida (Pre-entreno)</td>
-                                    <td class="px-3 py-2 text-gray-600">Carne magra o pollo, pasta/arroz, verduras cocidas</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
-                                    <td class="px-3 py-2 font-bold text-red-600"><i class="fa-solid fa-fire"></i> 04:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Entrenamiento (1 hora)</td>
-                                    <td class="px-3 py-2 text-gray-600">Rutina de fuerza + cardio HIIT</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50">
-                                    <td class="px-3 py-2 font-bold text-purple-600">05:45 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Snack Post-entreno</td>
-                                    <td class="px-3 py-2 text-gray-600">Batido de leche con plátano y avena, o sándwich de atún</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
-                                    <td class="px-3 py-2 font-bold text-gray-600">06:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Estudio y Descanso</td>
-                                    <td class="px-3 py-2 text-gray-600">Tiempo dedicado a responsabilidades, lectura o videojuegos</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50">
-                                    <td class="px-3 py-2 font-bold text-amber-600">08:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Cena</td>
-                                    <td class="px-3 py-2 text-gray-600">Ensalada grande con pollo desmenuzado, o fajitas de carne</td>
-                                </tr>
-                                <tr class="hover:bg-emerald-50/50 bg-emerald-50/30">
-                                    <td class="px-3 py-2 font-bold text-indigo-600"><i class="fa-solid fa-moon"></i> 10:30 PM</td>
-                                    <td class="px-3 py-2 font-semibold">Dormir</td>
-                                    <td class="px-3 py-2 text-gray-600">8 horas de sueño profundo para crear músculo</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-dumbbell"></i> Rutina de Entrenamiento (1 Hora) - L, M, X, J, V</h3>
-                <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 border border-red-100 mb-6">
-                    <div class="grid grid-cols-1 gap-3 text-xs">
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-bold text-red-600 mb-1">🏃 Calentamiento (10 min)</div>
-                            <p class="text-gray-700">Trotar, saltar la cuerda, movilidad articular</p>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-bold text-orange-600 mb-1">💪 Fuerza (30 min)</div>
-                            <p class="text-gray-700"><strong>Opción A:</strong> Mochila con libros/pesas: Sentadillas, flexiones, dominadas (si es posible), levantamientos<br><strong>Opción B:</strong> Ejercicios con peso corporal + resistencia</p>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-bold text-pink-600 mb-1">⚡ Cardio HIIT (15 min)</div>
-                            <p class="text-gray-700">30 seg intenso + 30 seg recuperación x 5 ciclos. Ejemplo: Burpees, montaña rusa, saltos</p>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-bold text-blue-600 mb-1">❄️ Enfriamiento (5 min)</div>
-                            <p class="text-gray-700">Estiramiento completo + respiración profunda</p>
-                        </div>
-                    </div>
-                </div>
-
-                <h3 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-basket-shopping"></i> Lista de Compras Sugerida</h3>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div>
-                            <h4 class="font-bold text-emerald-700 mb-2">🥚 Proteínas (Prioritarias)</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Huevos (cartera grande)</li>
-                                <li>Pechuga de pollo</li>
-                                <li>Carne de res magra</li>
-                                <li>Latas de atún</li>
-                                <li>Yogurt griego</li>
-                                <li>Leche o bebida vegetal</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-orange-700 mb-2">🌾 Carbohidratos</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Avena entera</li>
-                                <li>Arroz integral/blanco</li>
-                                <li>Pasta</li>
-                                <li>Pan integral</li>
-                                <li>Camote o papa</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-red-700 mb-2">🍎 Frutas (Pre/Post)</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Plátanos (excelentes)</li>
-                                <li>Frutos rojos</li>
-                                <li>Manzanas</li>
-                                <li>Melón</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-green-700 mb-2">🥬 Verduras</h4>
-                            <ul class="text-gray-700 space-y-1 list-disc pl-4">
-                                <li>Brócoli</li>
-                                <li>Espinacas</li>
-                                <li>Calabacines</li>
-                                <li>Pimientos</li>
-                                <li>Cebolla y lechuga</li>
-                            </ul>
-                        </div>
-                        <div class="col-span-2">
-                            <h4 class="font-bold text-yellow-700 mb-2">🥑 Grasas Buenas</h4>
-                            <p class="text-gray-700">Aguacate • Aceite de oliva • Almendras • Nueces</p>
-                        </div>
-                        <div class="col-span-2 bg-amber-50 p-2 rounded-lg border border-amber-200">
-                            <h4 class="font-bold text-amber-800 mb-1">⚙️ Equipo Básico (Opcional)</h4>
-                            <p class="text-gray-700">Mochila resistente para llenarla de libros (pesa casera) • Par de mancuernas de peso medio</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl">
-                    <h4 class="font-bold text-emerald-800 mb-2"><i class="fa-solid fa-sun"></i> Regla de Fin de Semana</h4>
-                    <p class="text-xs text-emerald-900">Sábado o domingo: 1 "comida libre" (pizza, hamburguesa, tacos) para disfrutar con amigos sin remordimientos. Retoma agua y buenos hábitos en la siguiente comida. Descanso completo del ejercicio formal los domingos.</p>
-                </div>
-            </div>
-            
-        </section>
+        <div class="mt-6 bg-white p-4 rounded-xl border border-gray-100">
+            <h4 class="font-bold mb-3 text-gray-800"><i class="fa-solid fa-lightbulb mr-2"></i>Cómo Funciona</h4>
+            <ul class="text-sm text-gray-600 space-y-2">
+                <li>✅ <strong>Fase 1 (25 min):</strong> Enfócate 100% en tu tarea sin distracciones</li>
+                <li>✅ <strong>Fase 2 (5 min):</strong> Descansa, camina, bebe agua</li>
+                <li>✅ <strong>Después de 4 ciclos:</strong> Descansa 15-30 min (descanso largo)</li>
+                <li>✅ Ideal para estudiar, hacer tareas o proyectos</li>
+            </ul>
+        </div>
+    </div>
+</section>
 
     </main>
 
@@ -615,7 +960,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Provided Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyCBiiY9GSlF-7r3wjBwcLCq5jyxKVOjAAE",
             authDomain: "smartform-ee4bb.firebaseapp.com",
@@ -626,42 +970,78 @@
             measurementId: "G-07XSZSSCQ5"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // App State
         let currentUser = null;
         let appData = {
             startDate: null,
-            teen: {},
-            youth: {}
+            itzayana: {},
+            diego: {},
+            rewards: { weeksPerfect: 0, treasureOpened: [] },
+            pomodoro: { sessionsToday: 0 }
         };
-        const TOTAL_DAYS_TEEN = 21;
-        const TOTAL_DAYS_YOUTH = 28;
+        const TOTAL_DAYS_ITZAYANA = 21;
+        const TOTAL_DAYS_DIEGO = 28;
         const DEBT_FEE = 10;
         let currentDay = 1;
         let performanceChartInstance = null;
+        let radarChartInstance = null;
+        let pomodoroInterval = null;
+        let pomodoroTime = 1500; // 25 minutos en segundos
+        let pomodoroMode = 'work'; // 'work' o 'break'
+        let isRunningPomodoro = false;
+
+        // EASTER EGG DETECTION
+        let logoClickCount = 0;
+        let konami = [];
+        const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
 
         const quotes = [
             "La disciplina es el puente entre metas y logros.",
             "No te detengas cuando estés cansado, detente cuando hayas terminado.",
             "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
             "Cuida tu cuerpo, es el único lugar que tienes para vivir.",
-            "La motivación te hace empezar, el hábito te mantiene en marcha."
+            "La motivación te hace empezar, el hábito te mantiene en marcha.",
+            "Tu futuro depende de lo que hagas hoy.",
+            "Un cuerpo sano es una mente sana.",
+            "La transformación no ocurre en el gimnasio, ocurre en tu mente.",
+            "Cada día es una nueva oportunidad para ser mejor.",
+            "Los ganadores nunca se rinden, los que se rinden nunca ganan."
+        ];
+
+        const punishments = [
+            "💰 $20 de multa (el doble)",
+            "🧹 Lavar los platos del día",
+            "💪 50 lagartijas de castigo",
+            "🚴 30 minutos de bici extra",
+            "📱 Sin celular por 2 horas",
+            "🧡 Hug time con un abrazo genuino",
+            "🎯 Doble reto mañana",
+            "✍️ Escribir 100 palabras sobre tu fallo"
+        ];
+
+        const rewards = [
+            "🎉 Pase libre de ejercicio (1 día)",
+            "🍕 Pizza night permitida",
+            "🎮 1 hora extra de gaming",
+            "💜 Tema oscuro desbloqueado",
+            "🏆 Título: 'Imparable'",
+            "🎵 Playlist premium unlock",
+            "😎 Filtro especial en la app",
+            "🌟 Aura dorada por 3 días"
         ];
 
         async function initApp() {
-            // Setup Date and Quote
+            setupEasterEggs();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('es-ES', options);
             document.getElementById('motivational-quote').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
 
-            // Start Notification Service
             startSmartNotifications();
+            fetchWeather();
 
-            // Handle Auth
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUser = user;
@@ -679,21 +1059,124 @@
             });
         }
 
+        function setupEasterEggs() {
+            // Logo click counter
+            document.getElementById('logo-easter-egg').addEventListener('click', () => {
+                logoClickCount++;
+                if (logoClickCount === 5) {
+                    triggerLogoEasterEgg();
+                    logoClickCount = 0;
+                }
+            });
+
+            // Konami Code detector
+            document.addEventListener('keydown', (e) => {
+                konami.push(e.keyCode);
+                konami = konami.slice(-10);
+                if (konami.join(',') === konamiCode.join(',')) {
+                    triggerKonamiEasterEgg();
+                    konami = [];
+                }
+            });
+        }
+
+        function triggerLogoEasterEgg() {
+            const logo = document.getElementById('logo-easter-egg');
+            logo.classList.add('glitch-text');
+            playSound('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            setTimeout(() => logo.classList.remove('glitch-text'), 300);
+            showToast('⚡ ¡Logo secreto activado! Eres 10x más rápido hoy', 'success');
+        }
+
+        function triggerKonamiEasterEgg() {
+            document.body.style.transform = 'rotateZ(360deg)';
+            document.body.style.transition = 'transform 0.8s ease-out';
+            setTimeout(() => {
+                document.body.style.transform = 'rotateZ(0deg)';
+            }, 800);
+            showToast('🎮 ¡CÓDIGO SECRETO DESBLOQUEADO! Tu app ahora tiene +50% de poder', 'success');
+            Swal.fire({
+                title: '🎮 MODO SECRETO ACTIVADO',
+                html: '<p>Acabas de desbloquear el <strong>Modo Hardcore</strong>.</p><p>Todas tus rachas ahora valen 2x. 🔥</p>',
+                icon: 'success',
+                confirmButtonColor: '#4f46e5'
+            });
+        }
+
+        function playSound(url) {
+            const audio = new Audio(url);
+            audio.play().catch(() => {});
+        }
+
+        async function fetchWeather() {
+            try {
+                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=27.4891&longitude=-110.3591&current=temperature_2m,weather_code&timezone=auto');
+                const data = await response.json();
+                const temp = data.current.temperature_2m;
+                const code = data.current.weather_code;
+                
+                const weatherCard = document.getElementById('weather-card');
+                const tempEl = document.getElementById('weather-temp');
+                const iconEl = document.getElementById('weather-icon');
+                const descEl = document.getElementById('weather-desc');
+
+                let desc = 'Soleado';
+                let icon = '☀️';
+                let alert = '';
+
+                if (code === 0 || code === 1) {
+                    desc = 'Soleado';
+                    icon = '☀️';
+                } else if (code === 2 || code === 3) {
+                    desc = 'Nublado';
+                    icon = '☁️';
+                } else if (code === 45 || code === 48) {
+                    desc = 'Neblinoso';
+                    icon = '🌫️';
+                } else if (code === 51 || code === 61 || code === 80) {
+                    desc = 'Lluvia ligera';
+                    icon = '🌧️';
+                    alert = '💧 Lluvia hoy. Considera ejercicio en casa.';
+                } else if (code >= 52 || code >= 62 || code >= 81) {
+                    desc = 'Lluvia fuerte';
+                    icon = '⛈️';
+                    alert = '⛈️ ¡Lluvia fuerte! Mejor entrena en casa hoy.';
+                }
+
+                if (temp > 38) {
+                    alert = `🔥 ¡${Math.round(temp)}°C! Toma 2x agua hoy y evita el sol directo.`;
+                } else if (temp < 10) {
+                    alert = `❄️ Hace frío (${Math.round(temp)}°C). Abrígate bien para entrenar.`;
+                }
+
+                tempEl.innerText = `${Math.round(temp)}°C`;
+                iconEl.innerText = icon;
+                descEl.innerText = desc;
+                if (alert) {
+                    document.getElementById('weather-alert-msg').innerText = alert;
+                }
+
+                weatherCard.classList.remove('hidden');
+            } catch (err) {
+                console.log('Weather API error:', err);
+            }
+        }
+
         async function loadData() {
             if (!currentUser) return;
             
-            // Following strict path rule: /artifacts/{appId}/users/{userId}/{collectionName}
-            const docRef = doc(db, 'artifacts', firebaseConfig.appId, 'users', currentUser.uid, 'data', 'progress');
+            const docRef = doc(db, 'artifacts', firebaseConfig.projectId, 'users', currentUser.uid, 'data', 'progress');
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
                 appData = docSnap.data();
             } else {
-                // First time setup
                 appData = {
-                    startDate: new Date().toISOString(),
-                    teen: {},
-                    youth: {}
+                    startDate: new Date("2026-08-10").toISOString(),
+                    itzayana: {},
+                    diego: {},
+                    rewards: { weeksPerfect: 0, treasureOpened: [] },
+                    pomodoro: { sessionsToday: 0 }
                 };
                 await setDoc(docRef, appData);
             }
@@ -702,11 +1185,12 @@
             renderCalendars();
             calculateDebtsAndProgress();
             updateCharts();
+            checkWeeklyRewards();
         }
 
         async function saveData() {
             if (!currentUser) return;
-            const docRef = doc(db, 'artifacts', firebaseConfig.appId, 'users', currentUser.uid, 'data', 'progress');
+            const docRef = doc(db, 'artifacts', firebaseConfig.projectId, 'users', currentUser.uid, 'data', 'progress');
             await setDoc(docRef, appData, { merge: true });
             calculateDebtsAndProgress();
             updateCharts();
@@ -715,7 +1199,6 @@
         function calculateCurrentDay() {
             const start = new Date(appData.startDate);
             const now = new Date();
-            // Calculate difference in days (ignoring time)
             start.setHours(0,0,0,0);
             now.setHours(0,0,0,0);
             const diffTime = Math.abs(now - start);
@@ -723,50 +1206,62 @@
             
             document.getElementById('current-day-number').innerText = currentDay;
             
-            let teenLeft = Math.max(0, TOTAL_DAYS_TEEN - currentDay + 1);
-            let youthLeft = Math.max(0, TOTAL_DAYS_YOUTH - currentDay + 1);
-            document.getElementById('days-left-teen').innerText = teenLeft;
-            document.getElementById('days-left-youth').innerText = youthLeft;
+            let itzayanaLeft = Math.max(0, TOTAL_DAYS_ITZAYANA - currentDay + 1);
+            let diegoLeft = Math.max(0, TOTAL_DAYS_DIEGO - currentDay + 1);
+            document.getElementById('days-left-itzayana').innerText = itzayanaLeft;
+            document.getElementById('days-left-diego').innerText = diegoLeft;
+
+            const startDate = new Date(appData.startDate);
+            const daysToFinish = (date, totalDays) => {
+                const endDate = new Date(date);
+                endDate.setDate(endDate.getDate() + totalDays - 1);
+                const now = new Date();
+                const diff = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                return Math.max(0, diff);
+            };
+
+            const monthName = (date) => date.toLocaleDateString('es-ES', { month: 'long', day: 'numeric', year: 'numeric' });
+            
+            document.getElementById('calendar-info-itzayana').innerHTML = `
+                <strong>${monthName(startDate)}</strong> • Faltan <strong>${daysToFinish(startDate, TOTAL_DAYS_ITZAYANA)}</strong> días para terminar
+            `;
+            document.getElementById('calendar-info-diego').innerHTML = `
+                <strong>${monthName(startDate)}</strong> • Faltan <strong>${daysToFinish(startDate, TOTAL_DAYS_DIEGO)}</strong> días para terminar
+            `;
         }
 
         function renderCalendars() {
-            const gridTeen = document.getElementById('grid-teen');
-            const gridYouth = document.getElementById('grid-youth');
-            gridTeen.innerHTML = '';
-            gridYouth.innerHTML = '';
+            const gridItzayana = document.getElementById('grid-itzayana');
+            const gridDiego = document.getElementById('grid-diego');
+            gridItzayana.innerHTML = '';
+            gridDiego.innerHTML = '';
 
-            for(let i = 1; i <= Math.max(TOTAL_DAYS_TEEN, TOTAL_DAYS_YOUTH); i++) {
-                if(i <= TOTAL_DAYS_TEEN) {
-                    gridTeen.appendChild(createDayBox(i, 'teen'));
+            for(let i = 1; i <= Math.max(TOTAL_DAYS_ITZAYANA, TOTAL_DAYS_DIEGO); i++) {
+                if(i <= TOTAL_DAYS_ITZAYANA) {
+                    gridItzayana.appendChild(createDayBox(i, 'itzayana'));
                 }
-                if(i <= TOTAL_DAYS_YOUTH) {
-                    gridYouth.appendChild(createDayBox(i, 'youth'));
+                if(i <= TOTAL_DAYS_DIEGO) {
+                    gridDiego.appendChild(createDayBox(i, 'diego'));
                 }
             }
         }
 
         function createDayBox(dayNum, type) {
             const box = document.createElement('div');
-            box.className = `aspect-square rounded-xl flex items-center justify-center font-bold text-sm cursor-pointer shadow-sm transition-transform active:scale-95`;
-            
-            let statusClass = "bg-white border-2 border-gray-200 text-gray-400"; // Future
+            box.className = `aspect-square rounded-xl flex items-center justify-center font-bold text-sm shadow-sm transition-transform active:scale-95 day-box`;
             
             const dayData = appData[type][dayNum];
             
             if (dayNum > currentDay) {
-                // Future days
-                 box.classList.add('bg-white', 'border-2', 'border-gray-200', 'text-gray-400');
+                box.classList.add('bg-gray-200', 'text-gray-400');
             } else if (dayData && dayData.comida && dayData.ejercicio && dayData.dormir) {
-                // Perfect day
-                box.classList.add('bg-green-500', 'text-white', 'border-2', 'border-green-600');
+                box.classList.add('bg-green-500', 'text-white', 'shadow-lg');
             } else if (dayNum < currentDay) {
-                // Past failed day
-                box.classList.add('bg-red-500', 'text-white', 'border-2', 'border-red-600');
+                box.classList.add('bg-red-500', 'text-white', 'shadow-lg');
             } else if (dayNum === currentDay) {
-                // Today, pending
-                box.classList.add('bg-amber-400', 'text-amber-900', 'border-2', 'border-amber-500', 'animate-pulse');
+                box.classList.add('bg-amber-400', 'text-amber-900', 'animate-pulse', 'shadow-lg');
             } else {
-                 box.classList.add('bg-white', 'border-2', 'border-gray-200', 'text-gray-400');
+                box.classList.add('bg-gray-100', 'text-gray-400');
             }
 
             box.innerText = dayNum;
@@ -785,13 +1280,12 @@
                 return;
             }
 
-            const isTeen = type === 'teen';
-            const titleColor = isTeen ? '#3b82f6' : '#10b981';
-            const titleText = isTeen ? 'Adolescente (12-13)' : 'Joven (17)';
+            const isTipo = type === 'itzayana';
+            const titleColor = isTipo ? '#3b82f6' : '#10b981';
+            const titleText = isTipo ? 'Itzayana (12-13)' : 'Diego (17)';
             
-            // Ensure object exists
             if(!appData[type][dayNum]) {
-                appData[type][dayNum] = { comida: false, ejercicio: false, dormir: false };
+                appData[type][dayNum] = { comida: false, agua: 0, ejercicio: false, tipo_ejercicio: '', dormir: false, notas: '' };
             }
             const data = appData[type][dayNum];
 
@@ -800,19 +1294,45 @@
             Swal.fire({
                 title: `Día ${dayNum} - ${titleText}`,
                 html: `
-                    <div class="text-left mt-4" id="modal-checks">
-                        <button class="${btnClass(data.comida)}" data-key="comida">
-                            <span><i class="fa-solid fa-utensils w-6 text-center"></i> Alimentación</span>
-                            <i class="fa-solid ${data.comida ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
-                        </button>
-                        <button class="${btnClass(data.ejercicio)}" data-key="ejercicio">
-                            <span><i class="fa-solid fa-dumbbell w-6 text-center"></i> Ejercicio</span>
-                            <i class="fa-solid ${data.ejercicio ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
-                        </button>
-                        <button class="${btnClass(data.dormir)}" data-key="dormir">
-                            <span><i class="fa-solid fa-bed w-6 text-center"></i> Descanso</span>
-                            <i class="fa-solid ${data.dormir ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
-                        </button>
+                    <div class="text-left mt-4">
+                        <div class="modal-tabs">
+                            <button class="modal-tab active" onclick="switchDayTab('registro')">Registro</button>
+                            <button class="modal-tab" onclick="switchDayTab('detalles')">Detalles</button>
+                        </div>
+                        
+                        <div id="tab-registro">
+                            <button class="${btnClass(data.comida)}" data-key="comida">
+                                <span><i class="fa-solid fa-utensils w-6 text-center"></i> Alimentación</span>
+                                <i class="fa-solid ${data.comida ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
+                            </button>
+                            <button class="${btnClass(data.ejercicio)}" data-key="ejercicio">
+                                <span><i class="fa-solid fa-dumbbell w-6 text-center"></i> Ejercicio</span>
+                                <i class="fa-solid ${data.ejercicio ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
+                            </button>
+                            <button class="${btnClass(data.dormir)}" data-key="dormir">
+                                <span><i class="fa-solid fa-bed w-6 text-center"></i> Descanso</span>
+                                <i class="fa-solid ${data.dormir ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
+                            </button>
+                        </div>
+
+                        <div id="tab-detalles" class="hidden">
+                            <label class="block text-sm font-bold mb-2">💧 Vasos de Agua (${data.agua})</label>
+                            <input type="range" min="0" max="12" value="${data.agua}" class="w-full" id="agua-input">
+                            
+                            <label class="block text-sm font-bold mt-4 mb-2">🏋️ Tipo de Ejercicio</label>
+                            <select id="tipo-ejercicio" class="nutrient-input" style="padding: 0.75rem;">
+                                <option value="">Selecciona...</option>
+                                <option value="circuito" ${data.tipo_ejercicio === 'circuito' ? 'selected' : ''}>Circuito</option>
+                                <option value="cardio" ${data.tipo_ejercicio === 'cardio' ? 'selected' : ''}>Cardio</option>
+                                <option value="fuerza" ${data.tipo_ejercicio === 'fuerza' ? 'selected' : ''}>Fuerza</option>
+                                <option value="yoga" ${data.tipo_ejercicio === 'yoga' ? 'selected' : ''}>Yoga</option>
+                                <option value="deporte" ${data.tipo_ejercicio === 'deporte' ? 'selected' : ''}>Deporte</option>
+                                <option value="otro" ${data.tipo_ejercicio === 'otro' ? 'selected' : ''}>Otro</option>
+                            </select>
+
+                            <label class="block text-sm font-bold mt-4 mb-2">📝 Notas</label>
+                            <textarea id="notas-input" class="nutrient-input" placeholder="¿Cómo te sentiste hoy?" rows="3">${data.notas || ''}</textarea>
+                        </div>
                     </div>
                     <p class="text-xs text-gray-400 mt-4">* Cambios se guardan automáticamente</p>
                 `,
@@ -820,27 +1340,46 @@
                 confirmButtonText: 'Cerrar y Guardar',
                 confirmButtonColor: titleColor,
                 didOpen: () => {
-                    // Add click listeners to buttons inside modal
-                    document.querySelectorAll('#modal-checks button').forEach(btn => {
+                    document.querySelectorAll('#tab-registro button').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const btnEl = e.currentTarget;
                             const key = btnEl.getAttribute('data-key');
                             
-                            // Toggle state
                             appData[type][dayNum][key] = !appData[type][dayNum][key];
                             const newState = appData[type][dayNum][key];
                             
-                            // Update UI instantly
                             btnEl.className = btnClass(newState);
                             btnEl.innerHTML = `
                                 <span><i class="fa-solid ${getIcon(key)} w-6 text-center"></i> ${getLabel(key)}</span>
                                 <i class="fa-solid ${newState ? 'fa-check-circle' : 'fa-circle'} text-xl"></i>
                             `;
-                            saveData(); // Save to Firebase in background
+                            saveData();
                         });
+                    });
+
+                    document.getElementById('agua-input')?.addEventListener('change', (e) => {
+                        appData[type][dayNum].agua = parseInt(e.target.value);
+                        saveData();
+                    });
+
+                    document.getElementById('tipo-ejercicio')?.addEventListener('change', (e) => {
+                        appData[type][dayNum].tipo_ejercicio = e.target.value;
+                        saveData();
+                    });
+
+                    document.getElementById('notas-input')?.addEventListener('change', (e) => {
+                        appData[type][dayNum].notas = e.target.value;
+                        saveData();
                     });
                 }
             });
+        };
+
+        window.switchDayTab = (tabName) => {
+            document.getElementById('tab-registro').style.display = tabName === 'registro' ? 'block' : 'none';
+            document.getElementById('tab-detalles').style.display = tabName === 'detalles' ? 'block' : 'none';
+            document.querySelectorAll('.modal-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
         };
 
         function getIcon(key) {
@@ -848,6 +1387,7 @@
             if(key === 'ejercicio') return 'fa-dumbbell';
             return 'fa-bed';
         }
+
         function getLabel(key) {
             if(key === 'comida') return 'Alimentación';
             if(key === 'ejercicio') return 'Ejercicio';
@@ -855,81 +1395,101 @@
         }
 
         function calculateDebtsAndProgress() {
-            let debtTeen = 0;
-            let debtYouth = 0;
-            let checksTeen = 0;
-            let checksYouth = 0;
-            let maxChecksTeen = Math.min(currentDay, TOTAL_DAYS_TEEN) * 3;
-            let maxChecksYouth = Math.min(currentDay, TOTAL_DAYS_YOUTH) * 3;
+            let debtItzayana = 0;
+            let debtDiego = 0;
+            let checksItzayana = 0;
+            let checksDiego = 0;
+            let maxChecksItzayana = Math.min(currentDay, TOTAL_DAYS_ITZAYANA) * 3;
+            let maxChecksDiego = Math.min(currentDay, TOTAL_DAYS_DIEGO) * 3;
 
-            // Calculate Teen
-            for(let i = 1; i < currentDay; i++) { // Only past days for debt
-                const d = appData.teen[i];
-                if (!d || !d.comida || !d.ejercicio || !d.dormir) debtTeen += DEBT_FEE;
+            let streakItzayana = 0;
+            let streakDiego = 0;
+
+            // Calcular Itzayana
+            for(let i = 1; i < currentDay; i++) {
+                const d = appData.itzayana[i];
+                if (!d || !d.comida || !d.ejercicio || !d.dormir) {
+                    debtItzayana += DEBT_FEE;
+                    streakItzayana = 0;
+                } else {
+                    streakItzayana++;
+                }
             }
-            for(let i=1; i<= currentDay && i <= TOTAL_DAYS_TEEN; i++){
-                const d = appData.teen[i];
+            for(let i=1; i<= currentDay && i <= TOTAL_DAYS_ITZAYANA; i++){
+                const d = appData.itzayana[i];
                 if(d) {
-                    if(d.comida) checksTeen++;
-                    if(d.ejercicio) checksTeen++;
-                    if(d.dormir) checksTeen++;
+                    if(d.comida) checksItzayana++;
+                    if(d.ejercicio) checksItzayana++;
+                    if(d.dormir) checksItzayana++;
                 }
             }
 
-            // Calculate Youth
-            for(let i = 1; i < currentDay; i++) { 
-                const d = appData.youth[i];
-                if (!d || !d.comida || !d.ejercicio || !d.dormir) debtYouth += DEBT_FEE;
+            // Calcular Diego
+            for(let i = 1; i < currentDay; i++) {
+                const d = appData.diego[i];
+                if (!d || !d.comida || !d.ejercicio || !d.dormir) {
+                    debtDiego += DEBT_FEE;
+                    streakDiego = 0;
+                } else {
+                    streakDiego++;
+                }
             }
-            for(let i=1; i<= currentDay && i <= TOTAL_DAYS_YOUTH; i++){
-                const d = appData.youth[i];
+            for(let i=1; i<= currentDay && i <= TOTAL_DAYS_DIEGO; i++){
+                const d = appData.diego[i];
                 if(d) {
-                    if(d.comida) checksYouth++;
-                    if(d.ejercicio) checksYouth++;
-                    if(d.dormir) checksYouth++;
+                    if(d.comida) checksDiego++;
+                    if(d.ejercicio) checksDiego++;
+                    if(d.dormir) checksDiego++;
                 }
             }
 
-            document.getElementById('debt-teen').innerText = debtTeen;
-            document.getElementById('debt-youth').innerText = debtYouth;
+            document.getElementById('debt-itzayana').innerText = debtItzayana;
+            document.getElementById('debt-diego').innerText = debtDiego;
+            document.getElementById('streak-itzayana').innerText = streakItzayana;
+            document.getElementById('streak-diego').innerText = streakDiego;
+            document.getElementById('streak-display-itzayana').innerText = streakItzayana;
+            document.getElementById('streak-display-diego').innerText = streakDiego;
 
-            // Update Progress bars
-            const pTeen = maxChecksTeen > 0 ? Math.round((checksTeen / maxChecksTeen) * 100) : 0;
-            const pYouth = maxChecksYouth > 0 ? Math.round((checksYouth / maxChecksYouth) * 100) : 0;
+            const pItzayana = maxChecksItzayana > 0 ? Math.round((checksItzayana / maxChecksItzayana) * 100) : 0;
+            const pDiego = maxChecksDiego > 0 ? Math.round((checksDiego / maxChecksDiego) * 100) : 0;
             
-            document.getElementById('progress-bar-teen').style.width = `${pTeen}%`;
-            document.getElementById('progress-text-teen').innerText = `${pTeen}%`;
+            document.getElementById('progress-bar-itzayana').style.width = `${pItzayana}%`;
+            document.getElementById('progress-text-itzayana').innerText = `${pItzayana}%`;
             
-            document.getElementById('progress-bar-youth').style.width = `${pYouth}%`;
-            document.getElementById('progress-text-youth').innerText = `${pYouth}%`;
+            document.getElementById('progress-bar-diego').style.width = `${pDiego}%`;
+            document.getElementById('progress-text-diego').innerText = `${pDiego}%`;
 
-            renderCalendars(); // Re-render grid colors
+            renderCalendars();
         }
 
         function updateCharts() {
+            updatePerformanceChart();
+            updateRadarChart();
+        }
+
+        function updatePerformanceChart() {
             const ctx = document.getElementById('performanceChart').getContext('2d');
             
-            // Extract last 7 days data
             const labels = [];
-            const dataTeen = [];
-            const dataYouth = [];
+            const dataItzayana = [];
+            const dataDiego = [];
             
             for(let i = Math.max(1, currentDay - 6); i <= currentDay; i++) {
                 labels.push(`Día ${i}`);
-                let scoreT = 0;
-                let scoreY = 0;
-                if(appData.teen[i]) {
-                    if(appData.teen[i].comida) scoreT++;
-                    if(appData.teen[i].ejercicio) scoreT++;
-                    if(appData.teen[i].dormir) scoreT++;
+                let scoreI = 0;
+                let scoreD = 0;
+                if(appData.itzayana[i]) {
+                    if(appData.itzayana[i].comida) scoreI++;
+                    if(appData.itzayana[i].ejercicio) scoreI++;
+                    if(appData.itzayana[i].dormir) scoreI++;
                 }
-                if(appData.youth[i]) {
-                    if(appData.youth[i].comida) scoreY++;
-                    if(appData.youth[i].ejercicio) scoreY++;
-                    if(appData.youth[i].dormir) scoreY++;
+                if(appData.diego[i]) {
+                    if(appData.diego[i].comida) scoreD++;
+                    if(appData.diego[i].ejercicio) scoreD++;
+                    if(appData.diego[i].dormir) scoreD++;
                 }
-                dataTeen.push((scoreT/3)*100);
-                dataYouth.push((scoreY/3)*100);
+                dataItzayana.push((scoreI/3)*100);
+                dataDiego.push((scoreD/3)*100);
             }
 
             if (performanceChartInstance) {
@@ -941,36 +1501,294 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Adolescente', data: dataTeen, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4 },
-                        { label: 'Joven', data: dataYouth, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4 }
+                        { label: 'Itzayana', data: dataItzayana, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4, borderWidth: 3 },
+                        { label: 'Diego', data: dataDiego, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4, borderWidth: 3 }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
+                    plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 20 } } },
                     scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
                 }
             });
         }
 
+        function updateRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            // Calcular promedios por categoría
+            let comidaI = 0, ejercicioI = 0, dormir I = 0, aguaI = 0;
+            let comidaD = 0, ejercicioD = 0, dormirD = 0, aguaD = 0;
+            let countI = 0, countD = 0;
+
+            for(let i = 1; i < currentDay; i++) {
+                if(appData.itzayana[i]) {
+                    if(appData.itzayana[i].comida) comidaI++;
+                    if(appData.itzayana[i].ejercicio) ejercicioI++;
+                    if(appData.itzayana[i].dormir) dormirI++;
+                    aguaI += appData.itzayana[i].agua || 0;
+                    countI++;
+                }
+                if(appData.diego[i]) {
+                    if(appData.diego[i].comida) comidaD++;
+                    if(appData.diego[i].ejercicio) ejercicioD++;
+                    if(appData.diego[i].dormir) dormirD++;
+                    aguaD += appData.diego[i].agua || 0;
+                    countD++;
+                }
+            }
+
+            const pComidaI = countI > 0 ? Math.round((comidaI / countI) * 100) : 0;
+            const pEjercicioI = countI > 0 ? Math.round((ejercicioI / countI) * 100) : 0;
+            const pDormirI = countI > 0 ? Math.round((dormirI / countI) * 100) : 0;
+            const pAguaI = countI > 0 ? Math.round(Math.min((aguaI / countI / 8) * 100, 100)) : 0;
+
+            const pComidaD = countD > 0 ? Math.round((comidaD / countD) * 100) : 0;
+            const pEjercicioD = countD > 0 ? Math.round((ejercicioD / countD) * 100) : 0;
+            const pDormirD = countD > 0 ? Math.round((dormirD / countD) * 100) : 0;
+            const pAguaD = countD > 0 ? Math.round(Math.min((aguaD / countD / 8) * 100, 100)) : 0;
+
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Alimentación', 'Ejercicio', 'Descanso', 'Hidratación'],
+                    datasets: [
+                        {
+                            label: 'Itzayana',
+                            data: [pComidaI, pEjercicioI, pDormirI, pAguaI],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.25)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#3b82f6',
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Diego',
+                            data: [pComidaD, pEjercicioD, pDormirD, pAguaD],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.25)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#10b981',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 12 }, padding: 20 }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: v => v + '%', stepSize: 20 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // POMODORO FUNCTIONS
+        window.startPomodoro = () => {
+            if (isRunningPomodoro) return;
+            isRunningPomodoro = true;
+
+            pomodoroInterval = setInterval(() => {
+                pomodoroTime--;
+                updatePomodoroDisplay();
+
+                if (pomodoroTime <= 0) {
+                    clearInterval(pomodoroInterval);
+                    isRunningPomodoro = false;
+
+                    if (pomodoroMode === 'work') {
+                        appData.pomodoro.sessionsToday = (appData.pomodoro.sessionsToday || 0) + 1;
+                        showToast('✅ ¡Sesión de trabajo completada! Descansa 5 minutos', 'success');
+                        pomodoroMode = 'break';
+                        pomodoroTime = 300; // 5 min break
+                    } else {
+                        showToast('🎉 Descanso completado. ¡Vuelve al trabajo!', 'success');
+                        pomodoroMode = 'work';
+                        pomodoroTime = 1500; // 25 min work
+                    }
+
+                    updatePomodoroDisplay();
+                    saveData();
+                }
+            }, 1000);
+        };
+
+        window.resetPomodoro = () => {
+            clearInterval(pomodoroInterval);
+            isRunningPomodoro = false;
+            pomodoroMode = 'work';
+            pomodoroTime = 1500;
+            updatePomodoroDisplay();
+        };
+
+        function updatePomodoroDisplay() {
+            const minutes = Math.floor(pomodoroTime / 60);
+            const seconds = pomodoroTime % 60;
+            document.getElementById('pomodoroTime').innerText = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            const progress = pomodoroMode === 'work' ? 
+                ((1500 - pomodoroTime) / 1500) * 440 :
+                ((300 - pomodoroTime) / 300) * 440;
+
+            document.getElementById('pomodoroProgress').style.strokeDashoffset = 440 - progress;
+            document.getElementById('pomodoroMode').innerText = pomodoroMode === 'work' ? 'Modo: TRABAJO 💪' : 'Modo: DESCANSO 😌';
+            document.getElementById('pomodoroCount').innerText = appData.pomodoro.sessionsToday || 0;
+        }
+
+        // REWARDS & TREASURE CHEST
+        function checkWeeklyRewards() {
+            const weeksCompleted = Math.floor(currentDay / 7);
+            const perfectWeeks = calculatePerfectWeeks();
+
+            if (perfectWeeks > (appData.rewards?.weeksPerfect || 0)) {
+                showTreasureChest();
+                appData.rewards.weeksPerfect = perfectWeeks;
+                saveData();
+            }
+        }
+
+        function calculatePerfectWeeks() {
+            let perfect = 0;
+            let weekDays = 0;
+            let daysPerfect = 0;
+
+            for (let i = 1; i < currentDay; i++) {
+                weekDays++;
+                const iData = appData.itzayana[i];
+                const dData = appData.diego[i];
+
+                if (iData?.comida && iData?.ejercicio && iData?.dormir && 
+                    dData?.comida && dData?.ejercicio && dData?.dormir) {
+                    daysPerfect++;
+                }
+
+                if (weekDays === 7) {
+                    if (daysPerfect === 7) perfect++;
+                    weekDays = 0;
+                    daysPerfect = 0;
+                }
+            }
+
+            return perfect;
+        }
+
+        function showTreasureChest() {
+            Swal.fire({
+                title: '🎉 ¡SEMANA PERFECTA!',
+                html: `
+                    <div class="text-center">
+                        <div class="text-6xl treasure-chest mb-4">💎</div>
+                        <p>¡Lograste una semana perfecta!</p>
+                        <p class="text-sm text-gray-600 mt-2">Haz clic en el cofre para recibir tu recompensa...</p>
+                    </div>
+                `,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    const chest = document.querySelector('.treasure-chest');
+                    chest.style.cursor = 'pointer';
+                    chest.addEventListener('click', openTreasure);
+                }
+            });
+        }
+
+        function openTreasure() {
+            const reward = rewards[Math.floor(Math.random() * rewards.length)];
+            const chest = document.querySelector('.treasure-chest');
+            chest.classList.add('chest-open');
+
+            // Particles
+            for (let i = 0; i < 5; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'reward-particle';
+                particle.innerText = '✨';
+                particle.style.position = 'fixed';
+                particle.style.left = (chest.getBoundingClientRect().left + 30) + 'px';
+                particle.style.top = (chest.getBoundingClientRect().top + 30) + 'px';
+                particle.style.fontSize = '2rem';
+                particle.style.zIndex = '10000';
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+
+            Swal.fire({
+                title: '🎁 ¡RECOMPENSA DESBLOQUEADA!',
+                html: `<p class="text-2xl">${reward}</p>`,
+                icon: 'success',
+                confirmButtonColor: '#4f46e5'
+            });
+
+            playSound('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            appData.rewards.treasureOpened.push({ date: new Date().toISOString(), reward });
+            saveData();
+        }
+
+        // PUNISHMENTS WHEEL
+        function showPunishmentWheel(type) {
+            const punishment = punishments[Math.floor(Math.random() * punishments.length)];
+            
+            Swal.fire({
+                title: `⚠️ ${type === 'itzayana' ? 'Itzayana' : 'Diego'} falló un día`,
+                html: `
+                    <div class="text-center">
+                        <p class="mb-4">Girando la ruleta del castigo...</p>
+                        <div class="text-6xl mb-4" id="wheel-result">🎡</div>
+                        <p id="punishment-text" class="text-lg font-bold">Esperando resultado...</p>
+                    </div>
+                `,
+                confirmButtonText: 'Aceptar castigo',
+                confirmButtonColor: '#ef4444',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    setTimeout(() => {
+                        document.getElementById('wheel-result').innerText = punishment.split(' ')[0];
+                        document.getElementById('punishment-text').innerText = punishment;
+                        playSound('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                    }, 1500);
+                }
+            });
+        }
+
         window.nav = (target) => {
-            // Update active state in nav buttons
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-target="sec-${target}"]`).classList.add('active');
             
-            // Hide all sections, show target
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(`sec-${target}`).classList.add('active');
         };
 
         window.toggleSchedule = (type) => {
-            const isTeen = type === 'teen';
+            const isItzayana = type === 'itzayana';
             
-            document.getElementById('tab-teen').className = `flex-1 py-2 text-sm font-bold rounded-lg transition ${isTeen ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`;
-            document.getElementById('tab-youth').className = `flex-1 py-2 text-sm font-bold rounded-lg transition ${!isTeen ? 'bg-white shadow text-emerald-600' : 'text-gray-500'}`;
+            document.getElementById('tab-itzayana').className = `flex-1 py-2 text-sm font-bold rounded-lg transition border-2 ${isItzayana ? 'bg-white shadow text-blue-600 border-blue-200' : 'text-gray-500 border-transparent'}`;
+            document.getElementById('tab-diego').className = `flex-1 py-2 text-sm font-bold rounded-lg transition border-2 ${!isItzayana ? 'bg-white shadow text-emerald-600 border-emerald-200' : 'text-gray-500 border-transparent'}`;
             
-            document.getElementById('info-teen').style.display = isTeen ? 'block' : 'none';
-            document.getElementById('info-youth').style.display = !isTeen ? 'block' : 'none';
+            document.getElementById('info-itzayana').style.display = isItzayana ? 'block' : 'none';
+            document.getElementById('info-diego').style.display = !isItzayana ? 'block' : 'none';
+        };
+
+        window.switchGuideTab = (type, section) => {
+            const allSections = document.querySelectorAll(`[id^="guide-${type}-"]`);
+            allSections.forEach(el => el.style.display = 'none');
+            document.getElementById(`guide-${type}-${section}`).style.display = 'block';
+
+            document.querySelectorAll(`#info-${type} .guide-tab-btn`).forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
         };
 
         function hideLoader() {
@@ -980,23 +1798,19 @@
         }
 
         function startSmartNotifications() {
-            // Check time every minute
             setInterval(() => {
                 const now = new Date();
                 const hours = now.getHours();
                 const minutes = now.getMinutes();
 
-                // Hydration Reminder (e.g., at 10 AM, 2 PM, 6 PM)
                 if ((hours === 10 || hours === 14 || hours === 18) && minutes === 0) {
-                    showToast('💧 ¡Hora de hidratarse! Toma un vaso de agua ahora mismo.', 'info');
+                    showToast('💧 ¡Hora de hidratarse! Toma un vaso de agua ahora.', 'info');
                 }
 
-                // Sleep preparation reminder (9 PM)
                 if (hours === 21 && minutes === 0) {
                     showToast('🌙 Prepárate para descansar. Apaga pantallas pronto.', 'info');
                 }
 
-                // End of day warning (11:30 PM)
                 if (hours === 23 && minutes === 30) {
                     checkMissingHabitsAndWarn();
                 }
@@ -1005,23 +1819,21 @@
         }
 
         function checkMissingHabitsAndWarn() {
-            let missing = false;
-            if(appData.teen[currentDay]) {
-                const d = appData.teen[currentDay];
-                if(!d.comida || !d.ejercicio || !d.dormir) missing = true;
-            } else { missing = true; }
-            
-            if(!missing && appData.youth[currentDay]) {
-                const d = appData.youth[currentDay];
-                if(!d.comida || !d.ejercicio || !d.dormir) missing = true;
-            } else if (!appData.youth[currentDay]) { missing = true; }
+            let missingI = false;
+            let missingD = false;
 
-            if(missing) {
-                Swal.fire({
-                    toast: true, position: 'top-end', showConfirmButton: false, timer: 5000,
-                    icon: 'warning', title: '¡Atención! Faltan hábitos por registrar hoy. ¡Evita la multa de $10!',
-                });
-            }
+            if(appData.itzayana[currentDay]) {
+                const d = appData.itzayana[currentDay];
+                if(!d.comida || !d.ejercicio || !d.dormir) missingI = true;
+            } else { missingI = true; }
+            
+            if(appData.diego[currentDay]) {
+                const d = appData.diego[currentDay];
+                if(!d.comida || !d.ejercicio || !d.dormir) missingD = true;
+            } else { missingD = true; }
+
+            if (missingI) showPunishmentWheel('itzayana');
+            if (missingD) showPunishmentWheel('diego');
         }
 
         function showToast(msg, icon) {
@@ -1032,7 +1844,6 @@
             });
         }
 
-        // Add dummy manifest to simulate PWA installability in browsers that support dynamic injection
         const manifest = {
             name: "Reto de habitos",
             short_name: "DML-FITNESS",
@@ -1045,21 +1856,7 @@
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(blob)}">`);
 
-        // Bootstrap App
         window.onload = initApp;
     </script>
-    <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(registration => {
-          console.log('Service Worker registrado con éxito:', registration.scope);
-        })
-        .catch(error => {
-          console.log('Fallo al registrar el Service Worker:', error);
-        });
-    });
-  }
-</script>
 </body>
 </html>
