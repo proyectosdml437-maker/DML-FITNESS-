@@ -1042,18 +1042,25 @@
             startSmartNotifications();
             fetchWeather();
 
+            let authInitialized = false;
             onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    currentUser = user;
-                    await loadData();
-                    hideLoader();
-                } else {
-                    try {
-                        await signInAnonymously(auth);
-                    } catch (error) {
-                        console.error("Auth Error:", error);
-                        Swal.fire('Error', 'No se pudo conectar a la base de datos.', 'error');
+                if (!authInitialized) {
+                    authInitialized = true;
+                    if (user) {
+                        currentUser = user;
+                        await loadData();
                         hideLoader();
+                    } else {
+                        try {
+                            const result = await signInAnonymously(auth);
+                            currentUser = result.user;
+                            await loadData();
+                            hideLoader();
+                        } catch (error) {
+                            console.error("Auth Error:", error);
+                            Swal.fire('Error', 'No se pudo conectar a la base de datos.', 'error');
+                            hideLoader();
+                        }
                     }
                 }
             });
@@ -1517,7 +1524,7 @@
             const ctx = document.getElementById('radarChart').getContext('2d');
             
             // Calcular promedios por categoría
-            let comidaI = 0, ejercicioI = 0, dormir I = 0, aguaI = 0;
+            let comidaI = 0, ejercicioI = 0, dormirI = 0, aguaI = 0;
             let comidaD = 0, ejercicioD = 0, dormirD = 0, aguaD = 0;
             let countI = 0, countD = 0;
 
